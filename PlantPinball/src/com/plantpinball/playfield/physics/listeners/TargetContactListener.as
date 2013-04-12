@@ -7,9 +7,7 @@ package com.plantpinball.playfield.physics.listeners
 	import com.plantpinball.playfield.data.TargetValueObject;
 		
 	public class TargetContactListener extends b2ContactListener
-	{
-		public static const TARGET_HIT:String = "targethit";
-		
+	{		
 		public function TargetContactListener()
 		{
 			super();
