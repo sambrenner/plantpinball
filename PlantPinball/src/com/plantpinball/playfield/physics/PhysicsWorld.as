@@ -10,7 +10,9 @@ package com.plantpinball.playfield.physics
 	import Box2D.Dynamics.b2FixtureDef;
 	import Box2D.Dynamics.b2World;
 	
-	import com.plantpinball.data.BodyType;
+	import com.plantpinball.playfield.data.BodyType;
+	import com.plantpinball.playfield.data.BodyValueObject;
+	import com.plantpinball.playfield.data.TargetValueObject;
 	import com.plantpinball.playfield.physics.listeners.TargetContactListener;
 	import com.plantpinball.utils.SizeUtil;
 	
@@ -212,11 +214,19 @@ package com.plantpinball.playfield.physics
 			var targetContactListener:TargetContactListener = new TargetContactListener();
 			this.SetContactListener(targetContactListener);
 			
-			_ball.SetUserData(BodyType.PINBALL);
+			var ballVO:BodyValueObject = new BodyValueObject;
+			ballVO.bodyType = BodyType.BALL;
+			
+			_ball.SetUserData(ballVO);
 			
 			for (var i:int = 0; i < _targets.length; i++) 
 			{
-				_targets[i].SetUserData(BodyType.TARGET + "_" + i);
+				var targetVO:TargetValueObject = new TargetValueObject();
+				targetVO.bodyType = BodyType.TARGET;
+				targetVO.hit = false;
+				targetVO.id = i;
+				
+				_targets[i].SetUserData(targetVO);
 			}
 		}
 		
