@@ -53,6 +53,22 @@ package com.plantpinball.playfield.physics
 			this.DrawDebugData();
 			
 			checkInput();
+			checkTargetHit();
+		}
+		
+		private function checkTargetHit():void
+		{
+			for(var i:int = 0; i<_targets.length; i++) 
+			{
+				var t:b2Body = _targets[i];
+				var tVO:TargetValueObject = t.GetUserData() as TargetValueObject;
+				
+				if(tVO.hit)
+				{
+					trace("Target " + tVO.id + " has been hit!");
+					tVO.hit = false;
+				}
+			}
 		}
 		
 		private function checkInput():void
@@ -213,7 +229,7 @@ package com.plantpinball.playfield.physics
 		{
 			var targetContactListener:TargetContactListener = new TargetContactListener();
 			this.SetContactListener(targetContactListener);
-			
+						
 			var ballVO:BodyValueObject = new BodyValueObject;
 			ballVO.bodyType = BodyType.BALL;
 			

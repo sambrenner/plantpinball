@@ -4,6 +4,7 @@ package com.plantpinball.playfield.physics.listeners
 	import Box2D.Dynamics.b2ContactListener;
 	
 	import com.plantpinball.playfield.data.BodyType;
+	import com.plantpinball.playfield.data.BodyValueObject;
 	import com.plantpinball.playfield.data.TargetValueObject;
 		
 	public class TargetContactListener extends b2ContactListener
@@ -15,13 +16,23 @@ package com.plantpinball.playfield.physics.listeners
 		
 		override public function BeginContact(contact:b2Contact):void
 		{
-			if(contact.GetFixtureA().GetBody().GetUserData() == BodyType.TARGET) 
+			var userDataA:BodyValueObject = contact.GetFixtureA().GetBody().GetUserData();
+			var userDataB:BodyValueObject = contact.GetFixtureB().GetBody().GetUserData();
+			
+			if(userDataA)
 			{
-				(contact.GetFixtureA().GetBody().GetUserData() as TargetValueObject).hit = true;
+				if((userDataA as BodyValueObject).bodyType == BodyType.TARGET) 
+				{
+					(userDataA as TargetValueObject).hit = true;
+				}
 			}
-			else if(contact.GetFixtureB().GetBody().GetUserData() == BodyType.TARGET)
+			
+			if(userDataB)
 			{
-				(contact.GetFixtureB().GetBody().GetUserData() as TargetValueObject).hit = true;
+				if((userDataB as BodyValueObject).bodyType == BodyType.TARGET)
+				{
+					(userDataB as TargetValueObject).hit = true;
+				}	
 			}
 		}
 	}
