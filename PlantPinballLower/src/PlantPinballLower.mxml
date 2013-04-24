@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				height="1280"
+				width="720"
+				showStatusBar="false"
+				windowComplete="init()">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.plantpinball.playfield.PlayfieldMain;
+			import com.plantpinball.utils.SizeUtil;
+			
+			import mx.core.UIComponent;
+				
+			private var _appContainer:UIComponent;
+			private var _playfield:PlayfieldMain;
+								
+			private function init():void
+			{
+				SizeUtil.SIZE = SizeUtil.HALF_SIZE;
+				
+				stage.scaleMode = StageScaleMode.NO_SCALE;
+				stage.align = StageAlign.TOP_LEFT;
+				
+				_playfield = new PlayfieldMain(stage);
+				_playfield.init();
+				
+				_appContainer = new UIComponent();
+				_appContainer.addChild(_playfield);
+				
+				addElement(_appContainer);
+			}
+		]]>
+	</fx:Script>
+</s:WindowedApplication>

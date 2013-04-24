@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<application xmlns="http://ns.adobe.com/air/application/3.4">
+<application xmlns="http://ns.adobe.com/air/application/3.1">
 
 <!-- Adobe AIR Application Descriptor File Template.
 
 	Specifies parameters for identifying, installing, and launching AIR applications.
 
-	xmlns - The Adobe AIR namespace: http://ns.adobe.com/air/application/3.4
+	xmlns - The Adobe AIR namespace: http://ns.adobe.com/air/application/3.1
 			The last segment of the namespace specifies the version 
 			of the AIR runtime required for this application to run.
 			
@@ -15,14 +15,14 @@
 
 	<!-- A universally unique application identifier. Must be unique across all AIR applications.
 	Using a reverse DNS-style name as the id is recommended. (Eg. com.example.ExampleApplication.) Required. -->
-	<id>com.plantpinball.lower</id>
+	<id>PlantPinballLower</id>
 
 	<!-- Used as the filename for the application. Required. -->
 	<filename>PlantPinballLower</filename>
 
 	<!-- The name that is displayed in the AIR application installer. 
 	May have multiple values for each language. See samples or xsd schema file. Optional. -->
-	<name>PlantPinball</name>
+	<name>PlantPinballLower</name>
 	
 	<!-- A string value of the format <0-999>.<0-999>.<0-999> that represents application version which can be used to check for application upgrade. 
 	Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
@@ -46,7 +46,7 @@
 	<initialWindow>
 		<!-- The main SWF or HTML file of the application. Required. -->
 		<!-- Note: In Flash Builder, the SWF reference is set automatically. -->
-		<content>Main.swf</content>
+		<content>[This value will be overwritten by Flash Builder in the output app.xml]</content>
 		
 		<!-- The title of the main window. Optional. -->
 		<!-- <title></title> -->
@@ -67,13 +67,13 @@
 		<!-- <maximizable></maximizable> -->
 
 		<!-- Whether the user can resize the window. Optional. Default true. -->
-		<!--<resizable>false</resizable>-->
+		<!-- <resizable></resizable> -->
 
 		<!-- The window's initial width in pixels. Optional. -->
-		<width>720</width>
+		<!-- <width></width> -->
 
 		<!-- The window's initial height in pixels. Optional. -->
-		<height>1280</height>
+		<!-- <height></height> -->
 
 		<!-- The window's initial x position. Optional. -->
 		<x>2000</x>
@@ -107,7 +107,7 @@
 		<!-- <softKeyboardBehavior></softKeyboardBehavior> -->
 	<autoOrients>false</autoOrients>
         <fullScreen>false</fullScreen>
-        <visible>true</visible>
+        <visible>false</visible>
     </initialWindow>
 
 	<!-- We recommend omitting the supportedProfiles element, -->
