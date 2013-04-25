@@ -1,32 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:WindowedApplication	xmlns:fx="http://ns.adobe.com/mxml/2009" 
-				xmlns:s="library://ns.adobe.com/flex/spark" 
-				xmlns:mx="library://ns.adobe.com/flex/mx"
-				height="1280"
-				width="720"
-				showStatusBar="false"
-				windowComplete="init()">
-	<fx:Declarations>
-		<!-- Place non-visual elements (e.g., services, value objects) here -->
-	</fx:Declarations>
-	
-	<fx:Script>
+						xmlns:s="library://ns.adobe.com/flex/spark" 
+						xmlns:mx="library://ns.adobe.com/flex/mx"
+						height="1280"
+						width="720"
+						showStatusBar="false"
+						windowComplete="init()"
+>
+<fx:Script>
 		<![CDATA[
 			import com.plantpinball.playfield.PlayfieldMain;
 			import com.plantpinball.utils.SizeUtil;
+			import com.plantpinball.utils.localconnection.LocalConnectionUtil;
 			
 			import mx.core.UIComponent;
 				
 			private var _appContainer:UIComponent;
 			private var _playfield:PlayfieldMain;
+			private var _localConnectionUtil:LocalConnectionUtil;
 								
 			private function init():void
+			{
+				initStage();
+				initLocalConnection();
+				initVisuals();
+			}
+			
+			private function initStage():void
 			{
 				SizeUtil.SIZE = SizeUtil.HALF_SIZE;
 				
 				stage.scaleMode = StageScaleMode.NO_SCALE;
 				stage.align = StageAlign.TOP_LEFT;
-				
+			}
+			
+			private function initLocalConnection():void
+			{
+				_localConnectionUtil = new LocalConnectionUtil("lower", "upper");
+			}
+			
+			private function initVisuals():void
+			{
 				_playfield = new PlayfieldMain(stage);
 				_playfield.init();
 				
