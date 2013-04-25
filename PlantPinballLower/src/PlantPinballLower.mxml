@@ -11,7 +11,7 @@
 		<![CDATA[
 			import com.plantpinball.playfield.PlayfieldMain;
 			import com.plantpinball.utils.SizeUtil;
-			import com.plantpinball.utils.localconnection.LocalConnectionUtil;
+			import com.plantpinball.utils.LocalConnectionUtil;
 			
 			import mx.core.UIComponent;
 				

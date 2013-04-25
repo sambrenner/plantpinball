@@ -6,7 +6,7 @@
 >
 	<fx:Script>
 		<![CDATA[
-			import com.plantpinball.utils.localconnection.LocalConnectionUtil;
+			import com.plantpinball.utils.LocalConnectionUtil;
 			
 			private var _localConnectionUtil:LocalConnectionUtil;
 			
