@@ -198,7 +198,6 @@ package com.plantpinball.playfield.physics
 				fd.friction = 0;
 				fd.restitution = 0.3;
 				bodyDefC.position.Set(((SizeUtil.width * padding) + (i * spacing * SizeUtil.width)) / PPM, (SizeUtil.height * y) / PPM);
-				bodyDefC.angle = Math.random() * Math.PI;
 				body = this.CreateBody(bodyDefC);
 				body.SetType(b2Body.b2_staticBody);
 				body.CreateFixture(fd);
@@ -219,7 +218,6 @@ package com.plantpinball.playfield.physics
 			fd.friction = 0;
 			fd.restitution = 0.1;
 			bodyDefC.position.Set(x / PPM, y / PPM);
-			bodyDefC.angle = Math.random() * Math.PI;
 			_ball = this.CreateBody(bodyDefC);
 			_ball.SetBullet(true);
 			_ball.CreateFixture(fd);
