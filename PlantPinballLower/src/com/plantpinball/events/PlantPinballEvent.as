@@ -6,6 +6,7 @@ package com.plantpinball.events
 	{
 		public static const ANIMATION_COMPLETE:String = "animation_complete";
 		public static const TARGET_HIT:String = "target_hit";
+		public static const ROW_CLEARED:String = "row_cleared";
 		
 		public var data:Object;
 		

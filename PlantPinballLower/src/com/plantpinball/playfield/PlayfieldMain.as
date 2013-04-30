@@ -49,6 +49,7 @@ package com.plantpinball.playfield
 			_cells = new Cells();
 			_cells.x = 0.2 * SizeUtil.width;
 			_cells.y = 100;
+			_cells.addEventListener(PlantPinballEvent.ROW_CLEARED, onRowCleared);
 			addChild(_cells);
 		}
 				
@@ -76,7 +77,13 @@ package com.plantpinball.playfield
 		{
 			var data:TargetValueObject = event.data as TargetValueObject;
 			
-			_cells.animateCell(data.id);			
+			_cells.hitCell(data.id);			
+		}
+		
+		private function onRowCleared(e:PlantPinballEvent):void
+		{
+			trace("ROW CLEARED");
+			//move targets down
 		}
 		
 		private function onKeyDown(event:KeyboardEvent):void
