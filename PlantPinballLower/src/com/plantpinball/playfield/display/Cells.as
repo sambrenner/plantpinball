@@ -12,7 +12,7 @@ package com.plantpinball.playfield.display
 		private var _fileIsHit:Vector.<Boolean> = new Vector.<Boolean>(5);
 		private var _padding:Number = 0.2;
 		private var _spacing:Number = (1 - (2*_padding)) / (_newestCells.length - 1);
-		private var _yMultiplier:int = 1;
+		private var _yMultiplier:int = 0;
 		private var _yOffset:int = 66;
 		
 		public function Cells()
@@ -25,7 +25,7 @@ package com.plantpinball.playfield.display
 			addEventListener(PlantPinballEvent.ANIMATION_COMPLETE, onAnimationComplete);
 			
 			resetFileStatus();
-			makeInitialTargets();
+			makeRow(0);
 			makeCellsActive();
 		}
 		
@@ -33,8 +33,6 @@ package com.plantpinball.playfield.display
 		{
 			_fileIsHit[cellId] = true;
 			_newestCells[cellId].animateDivision();
-			
-			if(isRowComplete()) progressRow();
 		}
 		
 		private function isRowComplete():Boolean
@@ -49,11 +47,23 @@ package com.plantpinball.playfield.display
 		
 		private function progressRow():void
 		{
+			_yMultiplier += 1;
+			
 			resetFileStatus();
+			resetRowAnimation();
+			
+			makeRow(_yMultiplier * _yOffset);
 			makeCellsActive();
 			
 			dispatchEvent(new PlantPinballEvent(PlantPinballEvent.ROW_CLEARED));
-			_yMultiplier += 1;
+		}
+		
+		private function resetRowAnimation():void
+		{
+			for(var i:int=0; i<_newestCells.length; i++)
+			{
+				_newestCells[i].reset();
+			}
 		}
 		
 		private function resetFileStatus():void
@@ -64,12 +74,13 @@ package com.plantpinball.playfield.display
 			}
 		}
 		
-		private function makeInitialTargets():void
+		private function makeRow(yPos:int):void
 		{
 			for(var i:int=0; i<_newestCells.length; i++)
 			{
 				var cell:Cell = makeCell(i);
-								
+				cell.y = yPos;
+				
 				_newestCells[i] = cell;
 				_cellHolder.addChild(cell);
 			}
@@ -114,18 +125,7 @@ package com.plantpinball.playfield.display
 		
 		private function onAnimationComplete(e:PlantPinballEvent):void
 		{
-			var target:Cell = e.target as Cell;
-			var fileId:int = target.fileId;
-			
-			var newCell:Cell = makeCell(fileId);
-			
-			newCell.active = false;
-			newCell.y = target.y + _yOffset; //possible bug on 2nd row clearing?
-			
-			_newestCells[fileId].reset();
-			_newestCells[fileId] = newCell;
-			
-			_cellHolder.addChild(newCell);
+			if(isRowComplete()) progressRow();
 		}
 	}
 }
