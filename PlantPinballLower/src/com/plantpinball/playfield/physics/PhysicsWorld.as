@@ -27,7 +27,10 @@ package com.plantpinball.playfield.physics
 		private var _leftFlipperBody:b2Body;
 		private var _rightFlipperBody:b2Body;
 		private var _ball:b2Body;
-		private var _targets:Vector.<b2Body>;
+		private var _targets:Vector.<b2Body> = new Vector.<b2Body>(5, true);
+		
+		private var _targetPadding:Number = 0.2;
+		private var _targetSpacing:Number = (1 - (2*_targetPadding)) / (_targets.length - 1);
 			
 		public function PhysicsWorld(gravity:b2Vec2, doSleep:Boolean)
 		{
@@ -177,14 +180,9 @@ package com.plantpinball.playfield.physics
 		
 		private function makeTargets():void
 		{
-			var padding:Number = 0.2;
-			var numTargets:int = 5
-			var spacing:Number = (1 - (2*padding)) / (numTargets - 1);
 			var y:Number = 0.2;
 			
-			_targets = new Vector.<b2Body>(numTargets, true);
-			
-			for(var i:int = 0; i < numTargets; i++)
+			for(var i:int = 0; i < _targets.length; i++)
 			{
 				var body:b2Body;
 				var fd:b2FixtureDef;
@@ -196,12 +194,22 @@ package com.plantpinball.playfield.physics
 				fd.density = 2.0;
 				fd.friction = 0;
 				fd.restitution = 0.3;
-				bodyDefC.position.Set(((SizeUtil.width * padding) + (i * spacing * SizeUtil.width)) / PPM, (SizeUtil.height * y) / PPM);
+				bodyDefC.position.Set(((SizeUtil.width * _targetPadding) + (i * _targetSpacing * SizeUtil.width)) / PPM, (SizeUtil.height * y) / PPM);
 				body = this.CreateBody(bodyDefC);
 				body.SetType(b2Body.b2_staticBody);
 				body.CreateFixture(fd);
 				
 				_targets[i] = body;
+			}
+		}
+		
+		public function moveTargets(yPosition:Number):void
+		{
+			yPosition /= SizeUtil.height;
+			
+			for(var i:int = 0; i<_targets.length; i++)
+			{
+				_targets[i].SetPosition(new b2Vec2(((SizeUtil.width * _targetPadding) + (i * _targetSpacing * SizeUtil.width)) / PPM, (SizeUtil.height * yPosition) / PPM));
 			}
 		}
 		

@@ -51,6 +51,8 @@ package com.plantpinball.playfield
 			_cells.y = 100;
 			_cells.addEventListener(PlantPinballEvent.ROW_CLEARED, onRowCleared);
 			addChild(_cells);
+			
+			onRowCleared(null);
 		}
 				
 		private function makePhysicsGraphics():void
@@ -83,7 +85,7 @@ package com.plantpinball.playfield
 		private function onRowCleared(e:PlantPinballEvent):void
 		{
 			trace("ROW CLEARED");
-			//move targets down
+			_physics.moveTargets(_cells.y + ((_cells.yMultiplier + 2.5) * _cells.yOffset));
 		}
 		
 		private function onKeyDown(event:KeyboardEvent):void

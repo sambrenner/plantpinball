@@ -127,5 +127,17 @@ package com.plantpinball.playfield.display
 		{
 			if(isRowComplete()) progressRow();
 		}
+
+		public function get yMultiplier():int
+		{
+			return _yMultiplier;
+		}
+
+		public function get yOffset():int
+		{
+			return _yOffset;
+		}
+
+
 	}
 }
