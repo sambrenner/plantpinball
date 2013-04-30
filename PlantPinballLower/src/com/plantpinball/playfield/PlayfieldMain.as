@@ -1,9 +1,10 @@
 package com.plantpinball.playfield
 {
-	import Box2D.Common.Math.b2Vec2;
-	import Box2D.Dynamics.b2DebugDraw;
-	
+	import com.plantpinball.events.PlantPinballEvent;
+	import com.plantpinball.playfield.data.TargetValueObject;
+	import com.plantpinball.playfield.display.Cells;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
+	import com.plantpinball.utils.SizeUtil;
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -11,10 +12,15 @@ package com.plantpinball.playfield
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	
+	import Box2D.Common.Math.b2Vec2;
+	import Box2D.Dynamics.b2DebugDraw;
+	
 	public class PlayfieldMain extends Sprite
 	{
 		private var _physics:PhysicsWorld;
 		private var _stage:Stage;
+		
+		private var _cells:Cells;
 		
 		public function PlayfieldMain(stage:Stage)
 		{
@@ -31,12 +37,22 @@ package com.plantpinball.playfield
 			_stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			
 			_physics = new PhysicsWorld(new b2Vec2(0.0, 10.0), true);
+			_physics.addEventListener(PlantPinballEvent.TARGET_HIT, onTargetHit);
 			_physics.init();
 			
-			makeDebugDraw();
+			makeNonPhysicsGraphics();
+			makePhysicsGraphics();
 		}
 				
-		private function makeDebugDraw():void
+		private function makeNonPhysicsGraphics():void
+		{
+			_cells = new Cells();
+			_cells.x = 0.2 * SizeUtil.width;
+			_cells.y = 100;
+			addChild(_cells);
+		}
+				
+		private function makePhysicsGraphics():void
 		{
 			var debugDraw:b2DebugDraw = new b2DebugDraw();
 			var debugSprite:Sprite = new Sprite();
@@ -54,7 +70,14 @@ package com.plantpinball.playfield
 		private function update(event:Event):void
 		{
 			_physics.update();
-		}		
+		}
+		
+		private function onTargetHit(event:PlantPinballEvent):void
+		{
+			var data:TargetValueObject = event.data as TargetValueObject;
+			
+			_cells.animateCell(data.id);			
+		}
 		
 		private function onKeyDown(event:KeyboardEvent):void
 		{

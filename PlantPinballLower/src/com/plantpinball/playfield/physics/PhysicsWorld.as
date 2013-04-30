@@ -1,22 +1,20 @@
 package com.plantpinball.playfield.physics
 {
-	import Box2D.Collision.Shapes.b2CircleShape;
-	import Box2D.Collision.Shapes.b2PolygonShape;
-	import Box2D.Common.Math.b2Vec2;
-	import Box2D.Dynamics.Joints.b2RevoluteJointDef;
-	import Box2D.Dynamics.b2Body;
-	import Box2D.Dynamics.b2BodyDef;
-	import Box2D.Dynamics.b2DebugDraw;
-	import Box2D.Dynamics.b2FixtureDef;
-	import Box2D.Dynamics.b2World;
-	
+	import com.plantpinball.events.PlantPinballEvent;
 	import com.plantpinball.playfield.data.BodyType;
 	import com.plantpinball.playfield.data.BodyValueObject;
 	import com.plantpinball.playfield.data.TargetValueObject;
 	import com.plantpinball.playfield.physics.listeners.TargetContactListener;
 	import com.plantpinball.utils.SizeUtil;
 	
-	import flash.display.Sprite;
+	import Box2D.Collision.Shapes.b2CircleShape;
+	import Box2D.Collision.Shapes.b2PolygonShape;
+	import Box2D.Common.Math.b2Vec2;
+	import Box2D.Dynamics.b2Body;
+	import Box2D.Dynamics.b2BodyDef;
+	import Box2D.Dynamics.b2FixtureDef;
+	import Box2D.Dynamics.b2World;
+	import Box2D.Dynamics.Joints.b2RevoluteJointDef;
 	
 	public class PhysicsWorld extends b2World
 	{
@@ -66,6 +64,7 @@ package com.plantpinball.playfield.physics
 				if(tVO.hit)
 				{
 					trace("Target " + tVO.id + " has been hit!");
+					this.dispatchEvent(new PlantPinballEvent(PlantPinballEvent.TARGET_HIT, tVO));
 					tVO.hit = false;
 				}
 			}

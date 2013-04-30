@@ -16,6 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+/*
+* Modifications for PlantPinball:
+* 	b2World extends EventDispatcher
+*/
+
 package Box2D.Dynamics{
 
 import Box2D.Common.Math.*;
@@ -29,6 +34,8 @@ import Box2D.Dynamics.Controllers.b2ControllerEdge;
 import Box2D.Dynamics.Joints.*;
 
 import Box2D.Common.b2internal;
+import flash.events.EventDispatcher;
+
 use namespace b2internal;
 
 
@@ -36,7 +43,7 @@ use namespace b2internal;
 * The world class manages all physics entities, dynamic simulation,
 * and asynchronous queries. 
 */
-public class b2World
+public class b2World extends EventDispatcher
 {
 	
 	// Construct a world object.
