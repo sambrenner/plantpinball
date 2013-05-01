@@ -10,8 +10,8 @@ package com.plantpinball.playfield.display
 		private var _cellHolder:MovieClip;
 		private var _newestCells:Vector.<Cell> = new Vector.<Cell>(5);
 		private var _fileIsHit:Vector.<Boolean> = new Vector.<Boolean>(5);
-		private var _padding:Number = 0.2;
-		private var _spacing:Number = (1 - (2*_padding)) / (_newestCells.length - 1);
+		private var _padding:Number = 0.33;
+		private var _spacing:Number = (1 - (_padding * 2)) / (_newestCells.length - 1);
 		private var _yMultiplier:int = 0;
 		private var _yOffset:int = 66;
 		
@@ -109,7 +109,7 @@ package com.plantpinball.playfield.display
 					break;
 			}
 			
-			newCell.x = (fileId * _spacing * SizeUtil.width) - (newCell.width / 2);
+			newCell.x = (_padding * SizeUtil.width) + (fileId * _spacing * SizeUtil.width) - (newCell.width / 2);
 			newCell.fileId = fileId;
 			
 			return newCell;

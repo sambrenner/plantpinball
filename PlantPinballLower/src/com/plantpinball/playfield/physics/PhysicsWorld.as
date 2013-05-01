@@ -22,6 +22,7 @@ package com.plantpinball.playfield.physics
 		private static const TIMESTEP:Number = 1.0 / 30.0;
 		private static const ITERATIONS:uint = 10;
 		private static const PPM:Number = 30;
+		private static const RAD_TO_DEG:Number = 57.296;
 		
 		private var _leftFlipperOn:Boolean = false;
 		private var _rightFlipperOn:Boolean = false;
@@ -30,7 +31,7 @@ package com.plantpinball.playfield.physics
 		private var _ball:b2Body;
 		private var _targets:Vector.<b2Body> = new Vector.<b2Body>(5, true);
 		
-		private var _targetPadding:Number = 0.2;
+		private var _targetPadding:Number = 0.31;
 		private var _targetSpacing:Number = (1 - (2*_targetPadding)) / (_targets.length - 1);
 			
 		public function PhysicsWorld(gravity:b2Vec2, doSleep:Boolean)
@@ -77,54 +78,24 @@ package com.plantpinball.playfield.physics
 		private function checkInput():void
 		{
 			if (_leftFlipperOn) {  
-				_leftFlipperBody.ApplyTorque(-25000);  
+				_leftFlipperBody.ApplyTorque(-5000);  
 			} else {  
 				if (_leftFlipperBody.IsAwake()) {  
-					_leftFlipperBody.ApplyTorque(5000);  
+					_leftFlipperBody.ApplyTorque(1000);  
 				}  
 			} 
 			
 			if (_rightFlipperOn) {  
-				_rightFlipperBody.ApplyTorque(25000);  
+				_rightFlipperBody.ApplyTorque(5000);  
 			} else {  
 				if (_rightFlipperBody.IsAwake()) {  
-					_rightFlipperBody.ApplyTorque(-5000);  
+					_rightFlipperBody.ApplyTorque(-1000);  
 				}  
 			} 
 		}
 		
 		private function makeWalls():void
 		{
-			/*var wall:b2PolygonShape = new b2PolygonShape();
-			var wallBd:b2BodyDef = new b2BodyDef();
-			var wallB:b2Body;
-			
-			var barPosOffset:Number = 94.0;
-			var barWidth:Number = 100.0 / PPM;
-			var centerX:Number = SizeUtil.width / PPM / 2;
-			var centerY:Number = SizeUtil.height / PPM / 2;
-			
-			wallBd.position.Set(-barPosOffset / PPM, centerY);
-			wall.SetAsBox(barWidth, centerY);
-			wallB = this.CreateBody(wallBd);
-			wallB.CreateFixture2(wall, 1.0);
-			
-			wallBd.position.Set((SizeUtil.width + barPosOffset) / PPM, centerY);
-			wallB = this.CreateBody(wallBd);
-			wallB.CreateFixture2(wall, 1.0);
-			
-			wallBd.position.Set(centerX, -barPosOffset / PPM);
-			wall.SetAsBox(centerX, barWidth);
-			wallB = this.CreateBody(wallBd);
-			wallB.CreateFixture2(wall, 1.0);
-			
-			wallBd.position.Set(centerX, (SizeUtil.height + barPosOffset) / PPM);
-			wallB = this.CreateBody(wallBd);
-			wallB.CreateFixture2(wall, 1.0);*/
-			
-			//var vertexArray:Array = new Array();
-			//vertexArray.push(new b2Vec2(606/PPM, 1049/PPM),new b2Vec2(658/PPM, 1042/PPM),new b2Vec2(658/PPM, 1280/PPM),new b2Vec2(492/PPM, 1280/PPM));
-			
 			var body:b2Body;
 			var bodyDef:b2BodyDef = new b2BodyDef();
 			var bodyPoly:b2PolygonShape = new b2PolygonShape();
@@ -143,21 +114,25 @@ package com.plantpinball.playfield.physics
 		
 		private function makeFlippers():void
 		{
-			var flipperWidth:int = 90;
-			var flipperHeight:int = 15;
-			var flipperOffset:int = 70;
+			var flipperWidth:int = 42;
+			var flipperHeight:int = 8;
+			var flipperOffset:int = 36;
 			var flipperUpperAngle:Number = .6;
 			var flipperLowerAngle:Number = -.6;
 			var flipperTorque:Number = 30.0;
 			var flipperMotorSpeed:Number = 0.0;
 			var flipperDensity:Number = 2.0;
 			var flipperFriction:Number = 0.0;
-			var flipperX:Number = 0.3;
-			var flipperY:Number = 0.75;
+			var flipperY:Number = 0.89;
 			
+			var leftFlipperX:Number = 0.35;
+			var rightFlipperX:Number = 0.56;
+			
+			
+			//left
 			var flipperDef:b2BodyDef = new b2BodyDef();
 			flipperDef.type = b2Body.b2_dynamicBody;
-			flipperDef.position.Set((SizeUtil.width * flipperX) / PPM, (SizeUtil.height * flipperY) / PPM);
+			flipperDef.position.Set((SizeUtil.width * leftFlipperX) / PPM, (SizeUtil.height * flipperY) / PPM);
 			_leftFlipperBody = this.CreateBody(flipperDef);
 			
 			var flipperBox:b2PolygonShape = new b2PolygonShape();
@@ -182,7 +157,8 @@ package com.plantpinball.playfield.physics
 			revoluteJointDef.enableMotor = true;  
 			this.CreateJoint(revoluteJointDef);
 			
-			flipperDef.position.Set((SizeUtil.width * (1-flipperX)) / PPM, (SizeUtil.height * flipperY) / PPM);	
+			//right
+			flipperDef.position.Set((SizeUtil.width * rightFlipperX) / PPM, (SizeUtil.height * flipperY) / PPM);	
 			_rightFlipperBody = this.CreateBody(flipperDef);
 			_rightFlipperBody.CreateFixture(flipperFixtureDef);
 			localCenter = _rightFlipperBody.GetWorldCenter();
@@ -278,6 +254,11 @@ package com.plantpinball.playfield.physics
 		public function set leftFlipperOn(value:Boolean):void
 		{
 			_leftFlipperOn = value;
+		}
+		
+		public function get flipperAngles():Vector.<Number>
+		{
+			return new <Number>[_leftFlipperBody.GetAngle() * RAD_TO_DEG, _rightFlipperBody.GetAngle() * RAD_TO_DEG];
 		}
 	}
 }

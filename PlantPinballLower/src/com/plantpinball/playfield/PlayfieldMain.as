@@ -2,10 +2,11 @@ package com.plantpinball.playfield
 {
 	import com.plantpinball.events.PlantPinballEvent;
 	import com.plantpinball.playfield.data.TargetValueObject;
+	import com.plantpinball.playfield.display.Background;
 	import com.plantpinball.playfield.display.Cells;
+	import com.plantpinball.playfield.display.Flippers;
 	import com.plantpinball.playfield.display.SolidSurfaces;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
-	import com.plantpinball.utils.SizeUtil;
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -22,6 +23,7 @@ package com.plantpinball.playfield
 		private var _stage:Stage;
 		
 		private var _cells:Cells;
+		private var _flippers:Flippers;
 		private var _solidSurfaces:SolidSurfaces;
 		
 		public function PlayfieldMain(stage:Stage)
@@ -48,11 +50,12 @@ package com.plantpinball.playfield
 				
 		private function makeNonPhysicsGraphics():void
 		{
+			addChild(new Background());
+			
 			_solidSurfaces = new SolidSurfaces();
 			addChild(_solidSurfaces);
 			
 			_cells = new Cells();
-			_cells.x = 0.2 * SizeUtil.width;
 			_cells.y = 100;
 			_cells.addEventListener(PlantPinballEvent.ROW_CLEARED, onRowCleared);
 			addChild(_cells);
@@ -62,6 +65,10 @@ package com.plantpinball.playfield
 				
 		private function makePhysicsGraphics():void
 		{
+			_flippers = new Flippers();
+			_flippers.y = 1138;
+			addChild(_flippers);
+			
 			var debugDraw:b2DebugDraw = new b2DebugDraw();
 			var debugSprite:Sprite = new Sprite();
 			addChild(debugSprite);
@@ -78,6 +85,7 @@ package com.plantpinball.playfield
 		private function update(event:Event):void
 		{
 			_physics.update();
+			_flippers.update(_physics.flipperAngles);
 		}
 		
 		private function onTargetHit(event:PlantPinballEvent):void

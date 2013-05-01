@@ -118,11 +118,11 @@ package com.plantpinball.utils
 				case 33:
 					wall.push(new b2Vec2(528, 950.95), new b2Vec2(500, 872.95), new b2Vec2(531, 928.95), new b2Vec2(532, 938.95));				
 					break;
-				case 34: 
-					wall.push(new b2Vec2(128, 1068.9), new b2Vec2(141, 1053.9), new b2Vec2(215, 1131.9), new b2Vec2(202, 1150.9), new b2Vec2(127, 1086.9));
+				case 34:
+					wall.push(new b2Vec2(129, 1084.9), new b2Vec2(129, 1065.9), new b2Vec2(140, 1053.9), new b2Vec2(198, 1113.9), new b2Vec2(180, 1133.9));
 					break;
-				case 35: 
-					wall.push(new b2Vec2(443, 1149.9), new b2Vec2(441, 1136.9), new b2Vec2(518, 1055.9), new b2Vec2(530, 1068.9), new b2Vec2(533, 1085.9), new b2Vec2(462, 1153.9));
+				case 35:
+					wall.push(new b2Vec2(475, 1137.9), new b2Vec2(457, 1117.9), new b2Vec2(519, 1053.9), new b2Vec2(530, 1067.9), new b2Vec2(528, 1084.9));
 					break;
 				case 36:
 					wall.push(new b2Vec2(605, 1047.9), new b2Vec2(627, 1041.9), new b2Vec2(573, 1132.9));
