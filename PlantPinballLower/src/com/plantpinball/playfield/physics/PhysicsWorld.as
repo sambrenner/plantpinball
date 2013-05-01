@@ -6,6 +6,7 @@ package com.plantpinball.playfield.physics
 	import com.plantpinball.playfield.data.TargetValueObject;
 	import com.plantpinball.playfield.physics.listeners.TargetContactListener;
 	import com.plantpinball.utils.SizeUtil;
+	import com.plantpinball.utils.WallUtil;
 	
 	import Box2D.Collision.Shapes.b2CircleShape;
 	import Box2D.Collision.Shapes.b2PolygonShape;
@@ -94,7 +95,7 @@ package com.plantpinball.playfield.physics
 		
 		private function makeWalls():void
 		{
-			var wall:b2PolygonShape = new b2PolygonShape();
+			/*var wall:b2PolygonShape = new b2PolygonShape();
 			var wallBd:b2BodyDef = new b2BodyDef();
 			var wallB:b2Body;
 			
@@ -119,7 +120,25 @@ package com.plantpinball.playfield.physics
 			
 			wallBd.position.Set(centerX, (SizeUtil.height + barPosOffset) / PPM);
 			wallB = this.CreateBody(wallBd);
-			wallB.CreateFixture2(wall, 1.0);
+			wallB.CreateFixture2(wall, 1.0);*/
+			
+			//var vertexArray:Array = new Array();
+			//vertexArray.push(new b2Vec2(606/PPM, 1049/PPM),new b2Vec2(658/PPM, 1042/PPM),new b2Vec2(658/PPM, 1280/PPM),new b2Vec2(492/PPM, 1280/PPM));
+			
+			var body:b2Body;
+			var bodyDef:b2BodyDef = new b2BodyDef();
+			var bodyPoly:b2PolygonShape = new b2PolygonShape();
+			var bodyFix:b2FixtureDef = new b2FixtureDef();
+			
+			for(var i:int = 1; i<=39; i++)
+			{
+				var vertexArray:Array = WallUtil.getWall(i);
+				
+				bodyDef.type = b2Body.b2_staticBody;
+				bodyPoly.SetAsArray(vertexArray, vertexArray.length);
+				body = this.CreateBody(bodyDef);
+				body.CreateFixture2(bodyPoly, 1.0);
+			}
 		}
 		
 		private function makeFlippers():void

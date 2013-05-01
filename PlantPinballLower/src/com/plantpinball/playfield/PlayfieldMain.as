@@ -3,6 +3,7 @@ package com.plantpinball.playfield
 	import com.plantpinball.events.PlantPinballEvent;
 	import com.plantpinball.playfield.data.TargetValueObject;
 	import com.plantpinball.playfield.display.Cells;
+	import com.plantpinball.playfield.display.SolidSurfaces;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
 	import com.plantpinball.utils.SizeUtil;
 	
@@ -21,6 +22,7 @@ package com.plantpinball.playfield
 		private var _stage:Stage;
 		
 		private var _cells:Cells;
+		private var _solidSurfaces:SolidSurfaces;
 		
 		public function PlayfieldMain(stage:Stage)
 		{
@@ -46,6 +48,9 @@ package com.plantpinball.playfield
 				
 		private function makeNonPhysicsGraphics():void
 		{
+			_solidSurfaces = new SolidSurfaces();
+			addChild(_solidSurfaces);
+			
 			_cells = new Cells();
 			_cells.x = 0.2 * SizeUtil.width;
 			_cells.y = 100;
