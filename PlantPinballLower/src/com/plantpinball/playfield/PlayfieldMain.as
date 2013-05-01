@@ -16,6 +16,7 @@ package com.plantpinball.playfield
 	
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.b2DebugDraw;
+	import com.plantpinball.playfield.display.Ball;
 	
 	public class PlayfieldMain extends Sprite
 	{
@@ -25,6 +26,7 @@ package com.plantpinball.playfield
 		private var _cells:Cells;
 		private var _flippers:Flippers;
 		private var _solidSurfaces:SolidSurfaces;
+		private var _ball:Ball;
 		
 		public function PlayfieldMain(stage:Stage)
 		{
@@ -40,7 +42,7 @@ package com.plantpinball.playfield
 			_stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 			_stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			
-			_physics = new PhysicsWorld(new b2Vec2(0.0, 10.0), true);
+			_physics = new PhysicsWorld(new b2Vec2(0.0, 13.0), true);
 			_physics.addEventListener(PlantPinballEvent.TARGET_HIT, onTargetHit);
 			_physics.init();
 			
@@ -69,6 +71,9 @@ package com.plantpinball.playfield
 			_flippers.y = 1138;
 			addChild(_flippers);
 			
+			_ball = new Ball();
+			addChild(_ball);
+			
 			var debugDraw:b2DebugDraw = new b2DebugDraw();
 			var debugSprite:Sprite = new Sprite();
 			addChild(debugSprite);
@@ -86,6 +91,12 @@ package com.plantpinball.playfield
 		{
 			_physics.update();
 			_flippers.update(_physics.flipperAngles);
+			
+			var ballPos:b2Vec2 = _physics.ballPosition;
+			_ball.x = ballPos.x;
+			_ball.y = ballPos.y;
+			
+			_ball.rotation = _physics.ballAngle;
 		}
 		
 		private function onTargetHit(event:PlantPinballEvent):void

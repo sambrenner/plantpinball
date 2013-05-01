@@ -188,7 +188,7 @@ package com.plantpinball.playfield.physics
 				fd.shape = circDef;
 				fd.density = 2.0;
 				fd.friction = 0;
-				fd.restitution = 0.3;
+				fd.restitution = 0.5;
 				bodyDefC.position.Set(((SizeUtil.width * _targetPadding) + (i * _targetSpacing * SizeUtil.width)) / PPM, (SizeUtil.height * y) / PPM);
 				body = this.CreateBody(bodyDefC);
 				body.SetType(b2Body.b2_staticBody);
@@ -217,7 +217,7 @@ package com.plantpinball.playfield.physics
 			fd = new b2FixtureDef();
 			fd.shape = circDef;
 			fd.density = 2.0;
-			fd.friction = 0;
+			fd.friction = 1.0;
 			fd.restitution = 0.1;
 			bodyDefC.position.Set(x / PPM, y / PPM);
 			_ball = this.CreateBody(bodyDefC);
@@ -259,6 +259,18 @@ package com.plantpinball.playfield.physics
 		public function get flipperAngles():Vector.<Number>
 		{
 			return new <Number>[_leftFlipperBody.GetAngle() * RAD_TO_DEG, _rightFlipperBody.GetAngle() * RAD_TO_DEG];
+		}
+		
+		public function get ballPosition():b2Vec2
+		{
+			var bp:b2Vec2 = _ball.GetPosition();
+			bp.Multiply(PPM);
+			return bp;
+		}
+		
+		public function get ballAngle():Number
+		{
+			return _ball.GetAngle() * RAD_TO_DEG % 360;
 		}
 	}
 }
