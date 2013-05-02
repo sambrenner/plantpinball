@@ -6,9 +6,11 @@ package com.plantpinball.playfield
 	import com.plantpinball.playfield.display.Ball;
 	import com.plantpinball.playfield.display.Cells;
 	import com.plantpinball.playfield.display.Flippers;
+	import com.plantpinball.playfield.display.Root;
 	import com.plantpinball.playfield.display.SolidSurfaces;
 	import com.plantpinball.playfield.display.Targets;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
+	import com.plantpinball.utils.SizeUtil;
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -29,6 +31,7 @@ package com.plantpinball.playfield
 		private var _solidSurfaces:SolidSurfaces;
 		private var _ball:Ball;
 		private var _targets:Targets;
+		private var _root:Root;
 		
 		public function PlayfieldMain(stage:Stage)
 		{
@@ -55,6 +58,10 @@ package com.plantpinball.playfield
 		private function makeNonPhysicsGraphics():void
 		{
 			addChild(new Background());
+			
+			_root = new Root();
+			_root.x = SizeUtil.width / 2;
+			addChild(_root);
 			
 			_cells = new Cells();
 			_cells.y = 100;
@@ -94,9 +101,12 @@ package com.plantpinball.playfield
 		
 		private function update(event:Event):void
 		{
+			var targetPositions:Vector.<b2Vec2> = _physics.targetPositions;
+			
 			_physics.update();
 			_flippers.update(_physics.flipperAngles);
-			_targets.update(_physics.targetPositions);
+			_targets.update(targetPositions);
+			_root.y = targetPositions[0].y + 60;
 			
 			var ballPos:b2Vec2 = _physics.ballPosition;
 			_ball.x = ballPos.x;

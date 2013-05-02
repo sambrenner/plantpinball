@@ -24,7 +24,7 @@ package com.plantpinball.playfield.display
 		
 		public function reset():void
 		{
-			gotoAndStop(1);
+			gotoAndStop(14);
 		}
 		
 		public function get active():Boolean

@@ -211,6 +211,8 @@ package com.plantpinball.playfield.physics
 		
 		public function makeBall(x:int, y:int):void 
 		{
+			if(_ball) this.DestroyBody(_ball);
+			
 			var fd:b2FixtureDef;
 			var bodyDefC:b2BodyDef = new b2BodyDef();
 			bodyDefC.type = b2Body.b2_dynamicBody;
