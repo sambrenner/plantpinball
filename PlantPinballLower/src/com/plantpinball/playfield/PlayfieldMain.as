@@ -53,6 +53,9 @@ package com.plantpinball.playfield
 			
 			makeNonPhysicsGraphics();
 			makePhysicsGraphics();
+			
+			onRowCleared(null);
+			update(null);
 		}
 				
 		private function makeNonPhysicsGraphics():void
@@ -67,8 +70,6 @@ package com.plantpinball.playfield
 			_cells.y = 100;
 			_cells.addEventListener(PlantPinballEvent.ROW_CLEARED, onRowCleared);
 			addChild(_cells);
-			
-			onRowCleared(null);
 		}
 				
 		private function makePhysicsGraphics():void
@@ -101,12 +102,14 @@ package com.plantpinball.playfield
 		
 		private function update(event:Event):void
 		{
+			var instant:Boolean = (event == null);
+			
 			var targetPositions:Vector.<b2Vec2> = _physics.targetPositions;
 			
 			_physics.update();
 			_flippers.update(_physics.flipperAngles);
-			_targets.update(targetPositions);
-			_root.y = targetPositions[0].y + 60;
+			_targets.update(targetPositions, instant);
+			_root.update(targetPositions[0].y + 60, instant);
 			
 			var ballPos:b2Vec2 = _physics.ballPosition;
 			_ball.x = ballPos.x;
@@ -124,7 +127,6 @@ package com.plantpinball.playfield
 		
 		private function onRowCleared(e:PlantPinballEvent):void
 		{
-			trace("ROW CLEARED");
 			_physics.moveTargets(_cells.y + ((_cells.yMultiplier + 2.5) * _cells.yOffset));
 		}
 		
