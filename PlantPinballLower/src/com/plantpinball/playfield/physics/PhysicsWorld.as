@@ -29,10 +29,11 @@ package com.plantpinball.playfield.physics
 		private var _leftFlipperBody:b2Body;
 		private var _rightFlipperBody:b2Body;
 		private var _ball:b2Body;
-		private var _targets:Vector.<b2Body> = new Vector.<b2Body>(5, true);
+		private var _numTargets:int = 5;
+		private var _targets:Vector.<b2Body> = new Vector.<b2Body>(_numTargets, true);
 		
 		private var _targetPadding:Number = 0.31;
-		private var _targetSpacing:Number = (1 - (2*_targetPadding)) / (_targets.length - 1);
+		private var _targetSpacing:Number = (1 - (2*_targetPadding)) / (_numTargets - 1);
 			
 		public function PhysicsWorld(gravity:b2Vec2, doSleep:Boolean)
 		{
@@ -61,7 +62,7 @@ package com.plantpinball.playfield.physics
 		
 		private function checkTargetHit():void
 		{
-			for(var i:int = 0; i<_targets.length; i++) 
+			for(var i:int = 0; i<_numTargets; i++) 
 			{
 				var t:b2Body = _targets[i];
 				var tVO:TargetValueObject = t.GetUserData() as TargetValueObject;
@@ -177,7 +178,7 @@ package com.plantpinball.playfield.physics
 		{
 			var y:Number = 0.2;
 			
-			for(var i:int = 0; i < _targets.length; i++)
+			for(var i:int = 0; i < _numTargets; i++)
 			{
 				var body:b2Body;
 				var fd:b2FixtureDef;
@@ -202,7 +203,7 @@ package com.plantpinball.playfield.physics
 		{
 			yPosition /= SizeUtil.height;
 			
-			for(var i:int = 0; i<_targets.length; i++)
+			for(var i:int = 0; i<_numTargets; i++)
 			{
 				_targets[i].SetPosition(new b2Vec2(((SizeUtil.width * _targetPadding) + (i * _targetSpacing * SizeUtil.width)) / PPM, (SizeUtil.height * yPosition) / PPM));
 			}
@@ -235,7 +236,7 @@ package com.plantpinball.playfield.physics
 			
 			_ball.SetUserData(ballVO);
 			
-			for (var i:int = 0; i < _targets.length; i++) 
+			for (var i:int = 0; i < _numTargets; i++) 
 			{
 				var targetVO:TargetValueObject = new TargetValueObject();
 				targetVO.bodyType = BodyType.TARGET;
@@ -263,7 +264,7 @@ package com.plantpinball.playfield.physics
 		
 		public function get ballPosition():b2Vec2
 		{
-			var bp:b2Vec2 = _ball.GetPosition();
+			var bp:b2Vec2 = _ball.GetPosition().Copy();
 			bp.Multiply(PPM);
 			return bp;
 		}
@@ -271,6 +272,20 @@ package com.plantpinball.playfield.physics
 		public function get ballAngle():Number
 		{
 			return _ball.GetAngle() * RAD_TO_DEG % 360;
+		}
+		
+		public function get targetPositions():Vector.<b2Vec2>
+		{
+			var positions:Vector.<b2Vec2> = new Vector.<b2Vec2>(_numTargets);
+			
+			for(var i:int = 0; i<_numTargets; i++)
+			{
+				var p:b2Vec2 = _targets[i].GetPosition().Copy();
+				p.Multiply(PPM);
+				positions[i] = p;
+			}
+			
+			return positions;
 		}
 	}
 }

@@ -3,9 +3,11 @@ package com.plantpinball.playfield
 	import com.plantpinball.events.PlantPinballEvent;
 	import com.plantpinball.playfield.data.TargetValueObject;
 	import com.plantpinball.playfield.display.Background;
+	import com.plantpinball.playfield.display.Ball;
 	import com.plantpinball.playfield.display.Cells;
 	import com.plantpinball.playfield.display.Flippers;
 	import com.plantpinball.playfield.display.SolidSurfaces;
+	import com.plantpinball.playfield.display.Targets;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
 	
 	import flash.display.Sprite;
@@ -16,7 +18,6 @@ package com.plantpinball.playfield
 	
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.b2DebugDraw;
-	import com.plantpinball.playfield.display.Ball;
 	
 	public class PlayfieldMain extends Sprite
 	{
@@ -27,6 +28,7 @@ package com.plantpinball.playfield
 		private var _flippers:Flippers;
 		private var _solidSurfaces:SolidSurfaces;
 		private var _ball:Ball;
+		private var _targets:Targets;
 		
 		public function PlayfieldMain(stage:Stage)
 		{
@@ -54,9 +56,6 @@ package com.plantpinball.playfield
 		{
 			addChild(new Background());
 			
-			_solidSurfaces = new SolidSurfaces();
-			addChild(_solidSurfaces);
-			
 			_cells = new Cells();
 			_cells.y = 100;
 			_cells.addEventListener(PlantPinballEvent.ROW_CLEARED, onRowCleared);
@@ -67,12 +66,18 @@ package com.plantpinball.playfield
 				
 		private function makePhysicsGraphics():void
 		{
+			_solidSurfaces = new SolidSurfaces();
+			addChild(_solidSurfaces);
+			
 			_flippers = new Flippers();
 			_flippers.y = 1138;
 			addChild(_flippers);
 			
 			_ball = new Ball();
 			addChild(_ball);
+			
+			_targets = new Targets();
+			addChild(_targets);
 			
 			var debugDraw:b2DebugDraw = new b2DebugDraw();
 			var debugSprite:Sprite = new Sprite();
@@ -91,6 +96,7 @@ package com.plantpinball.playfield
 		{
 			_physics.update();
 			_flippers.update(_physics.flipperAngles);
+			_targets.update(_physics.targetPositions);
 			
 			var ballPos:b2Vec2 = _physics.ballPosition;
 			_ball.x = ballPos.x;
@@ -119,7 +125,7 @@ package com.plantpinball.playfield
 				case 90:
 					_physics.leftFlipperOn = true;
 					break;
-				case 191:
+				case 77:
 					_physics.rightFlipperOn = true;
 					break;
 			}
@@ -132,7 +138,7 @@ package com.plantpinball.playfield
 				case 90:
 					_physics.leftFlipperOn = false;
 					break;
-				case 191:
+				case 77:
 					_physics.rightFlipperOn = false;
 					break;
 			}
