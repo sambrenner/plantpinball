@@ -54,7 +54,7 @@ package com.plantpinball.playfield.physics
 		{
 			this.Step(TIMESTEP, ITERATIONS, ITERATIONS);
 			this.ClearForces();
-			this.DrawDebugData();
+			//this.DrawDebugData();
 			
 			checkInput();
 			checkTargetHit();
