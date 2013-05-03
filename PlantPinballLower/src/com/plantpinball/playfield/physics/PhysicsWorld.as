@@ -222,7 +222,7 @@ package com.plantpinball.playfield.physics
 			var circDef:b2CircleShape= new b2CircleShape(18 / PPM);
 			fd = new b2FixtureDef();
 			fd.shape = circDef;
-			fd.density = 2.0;
+			fd.density = 1.0;
 			fd.friction = 1.0;
 			fd.restitution = 0.2;
 			bodyDefC.position.Set(point.x / PPM, point.y / PPM);

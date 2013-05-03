@@ -48,7 +48,7 @@ package com.plantpinball.playfield
 			_stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 			_stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			
-			_physics = new PhysicsWorld(new b2Vec2(0.0, 13.0), true);
+			_physics = new PhysicsWorld(new b2Vec2(0.0, 16.0), true);
 			_physics.addEventListener(PlantPinballEvent.TARGET_HIT, onTargetHit);
 			_physics.init();
 			
