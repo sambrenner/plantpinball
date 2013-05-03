@@ -107,7 +107,7 @@ package com.plantpinball.playfield.display
 					break;
 			}
 			
-			newCell.x = (LayoutUtil.TARGET_PADDING * SizeUtil.width) + (fileId * LayoutUtil.TARGET_SPACING * SizeUtil.width) - (newCell.width / 2);
+			newCell.x = (LayoutUtil.TARGET_PADDING * SizeUtil.width) + (fileId * LayoutUtil.TARGET_X_SPACING * SizeUtil.width) - (newCell.width / 2);
 			newCell.fileId = fileId;
 			
 			return newCell;

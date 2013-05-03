@@ -129,16 +129,11 @@ package com.plantpinball.playfield.physics
 			var flipperMotorSpeed:Number = 0.0;
 			var flipperDensity:Number = 2.0;
 			var flipperFriction:Number = 0.0;
-			var flipperY:Number = 0.895;
-			
-			var leftFlipperX:Number = 0.35;
-			var rightFlipperX:Number = 0.565;
-			
 			
 			//left
 			var flipperDef:b2BodyDef = new b2BodyDef();
 			flipperDef.type = b2Body.b2_dynamicBody;
-			flipperDef.position.Set((SizeUtil.width * leftFlipperX) / PPM, (SizeUtil.height * flipperY) / PPM);
+			flipperDef.position.Set((SizeUtil.width * LayoutUtil.LEFT_FLIPPER_X) / PPM, (SizeUtil.height * LayoutUtil.FLIPPER_Y) / PPM);
 			_leftFlipperBody = this.CreateBody(flipperDef);
 			
 			var flipperBox:b2PolygonShape = new b2PolygonShape();
@@ -164,7 +159,7 @@ package com.plantpinball.playfield.physics
 			this.CreateJoint(revoluteJointDef);
 			
 			//right
-			flipperDef.position.Set((SizeUtil.width * rightFlipperX) / PPM, (SizeUtil.height * flipperY) / PPM);	
+			flipperDef.position.Set((SizeUtil.width * LayoutUtil.RIGHT_FLIPPER_X) / PPM, (SizeUtil.height * LayoutUtil.FLIPPER_Y) / PPM);	
 			_rightFlipperBody = this.CreateBody(flipperDef);
 			_rightFlipperBody.CreateFixture(flipperFixtureDef);
 			localCenter = _rightFlipperBody.GetWorldCenter();
@@ -208,7 +203,7 @@ package com.plantpinball.playfield.physics
 			
 			for(var i:int = 0; i<_numTargets; i++)
 			{
-				_targets[i].SetPosition(new b2Vec2(((SizeUtil.width * LayoutUtil.TARGET_PADDING) + (i * LayoutUtil.TARGET_SPACING * SizeUtil.width)) / PPM, (SizeUtil.height * yPosition) / PPM));
+				_targets[i].SetPosition(new b2Vec2(((SizeUtil.width * LayoutUtil.TARGET_PADDING) + (i * LayoutUtil.TARGET_X_SPACING * SizeUtil.width)) / PPM, (SizeUtil.height * yPosition) / PPM));
 			}
 		}
 		
