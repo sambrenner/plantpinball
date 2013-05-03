@@ -30,6 +30,7 @@ package com.plantpinball.playfield.physics
 		private var _leftFlipperBody:b2Body;
 		private var _rightFlipperBody:b2Body;
 		private var _ball:b2Body;
+		private var _ballLostYBound:Number = (SizeUtil.height + 100) / PPM;
 		private var _numTargets:int = LayoutUtil.NUM_TARGETS;
 		private var _targets:Vector.<b2Body> = new Vector.<b2Body>(_numTargets, true);
 			
@@ -56,6 +57,8 @@ package com.plantpinball.playfield.physics
 			
 			checkInput();
 			checkTargetHit();
+			checkBallLost();
+			checkBallStuck();
 		}
 		
 		private function checkTargetHit():void
@@ -234,6 +237,20 @@ package com.plantpinball.playfield.physics
 			
 			var currentPos:b2Vec2 = _ball.GetPosition();
 			_ball.ApplyImpulse(new b2Vec2(currentPos.x, currentPos.y - 200) ,currentPos)
+		}
+		
+		private function checkBallLost():void
+		{
+			if(_ball.GetPosition().y > _ballLostYBound)
+			{
+				//TODO: Ball count, game over functionality
+				makeBall(LayoutUtil.INITIAL_BALL_POS);
+			}
+		}
+		
+		private function checkBallStuck():void
+		{
+			
 		}
 		
 		private function addContactListeners():void
