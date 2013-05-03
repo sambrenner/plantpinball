@@ -52,7 +52,7 @@ package com.plantpinball.playfield.physics
 		{
 			this.Step(TIMESTEP, ITERATIONS, ITERATIONS);
 			this.ClearForces();
-			//this.DrawDebugData();
+			this.DrawDebugData();
 			
 			checkInput();
 			checkTargetHit();
@@ -100,14 +100,18 @@ package com.plantpinball.playfield.physics
 			var bodyPoly:b2PolygonShape = new b2PolygonShape();
 			var bodyFix:b2FixtureDef = new b2FixtureDef();
 			
-			for(var i:int = 1; i<=39; i++)
+			for(var i:int = 1; i<=52; i++)
 			{
 				var vertexArray:Array = WallUtil.getWall(i);
 				
 				bodyDef.type = b2Body.b2_staticBody;
 				bodyPoly.SetAsArray(vertexArray, vertexArray.length);
+				bodyFix.shape = bodyPoly;
+				bodyFix.density = 1.0;
+				bodyFix.friction = 1.0;
+				bodyFix.restitution = (i == 51 || i == 52) ? 2.0 : 0.3; //give bumpers more elasticity
 				body = this.CreateBody(bodyDef);
-				body.CreateFixture2(bodyPoly, 1.0);
+				body.CreateFixture(bodyFix);
 			}
 		}
 		
@@ -122,10 +126,10 @@ package com.plantpinball.playfield.physics
 			var flipperMotorSpeed:Number = 0.0;
 			var flipperDensity:Number = 2.0;
 			var flipperFriction:Number = 0.0;
-			var flipperY:Number = 0.89;
+			var flipperY:Number = 0.895;
 			
 			var leftFlipperX:Number = 0.35;
-			var rightFlipperX:Number = 0.56;
+			var rightFlipperX:Number = 0.565;
 			
 			
 			//left
