@@ -17,6 +17,7 @@ package com.plantpinball.playfield.physics
 	import Box2D.Dynamics.b2FixtureDef;
 	import Box2D.Dynamics.b2World;
 	import Box2D.Dynamics.Joints.b2RevoluteJointDef;
+	import Box2D.Common.Math.b2Math;
 	
 	public class PhysicsWorld extends b2World
 	{
@@ -31,6 +32,8 @@ package com.plantpinball.playfield.physics
 		private var _rightFlipperBody:b2Body;
 		private var _ball:b2Body;
 		private var _ballLostYBound:Number = (SizeUtil.height + 100) / PPM;
+		private var _waitingForPlunger:Boolean;
+		private var _previousBallPosition:b2Vec2;
 		private var _numTargets:int = LayoutUtil.NUM_TARGETS;
 		private var _targets:Vector.<b2Body> = new Vector.<b2Body>(_numTargets, true);
 			
@@ -45,7 +48,7 @@ package com.plantpinball.playfield.physics
 			makeWalls();
 			makeFlippers();
 			makeTargets();
-			makeBall(LayoutUtil.INITIAL_BALL_POS);
+			resetBall();
 			addContactListeners();
 		}
 		
@@ -55,10 +58,12 @@ package com.plantpinball.playfield.physics
 			this.ClearForces();
 			this.DrawDebugData();
 			
+			var ballPos:b2Vec2 = _ball.GetPosition();
+			
 			checkInput();
 			checkTargetHit();
-			checkBallLost();
-			checkBallStuck();
+			checkBallLost(ballPos);
+			checkBallStuck(ballPos);
 		}
 		
 		private function checkTargetHit():void
@@ -228,24 +233,40 @@ package com.plantpinball.playfield.physics
 		
 		public function launchBall():void
 		{
-			if(_ball.IsAwake()) return;
+			if(!_waitingForPlunger) return;
+			
+			_waitingForPlunger = false;
 			
 			var currentPos:b2Vec2 = _ball.GetPosition();
 			_ball.ApplyImpulse(new b2Vec2(currentPos.x, currentPos.y - 200) ,currentPos)
 		}
 		
-		private function checkBallLost():void
+		public function resetBall():void
 		{
-			if(_ball.GetPosition().y > _ballLostYBound)
+			_waitingForPlunger = true;
+			makeBall(LayoutUtil.INITIAL_BALL_POS);
+		}
+		
+		private function checkBallLost(currentBallPosition:b2Vec2):void
+		{
+			if(currentBallPosition.y > _ballLostYBound)
 			{
 				//TODO: Ball count, game over functionality
-				makeBall(LayoutUtil.INITIAL_BALL_POS);
+				resetBall();
 			}
 		}
 		
-		private function checkBallStuck():void
+		private function checkBallStuck(currentBallPosition:b2Vec2):void
 		{
+			if(_previousBallPosition)
+			{
+				if(b2Math.Distance(_previousBallPosition, currentBallPosition) == 0 && !_waitingForPlunger)
+				{
+					_waitingForPlunger = true;
+				}
+			}
 			
+			_previousBallPosition = currentBallPosition.Copy();
 		}
 		
 		private function addContactListeners():void
