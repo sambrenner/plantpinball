@@ -12,7 +12,6 @@ package com.plantpinball.playfield.display
 		private var _newestCells:Vector.<Cell> = new Vector.<Cell>(5);
 		private var _fileIsHit:Vector.<Boolean> = new Vector.<Boolean>(5);
 		private var _yMultiplier:int = 0;
-		private var _yOffset:int = 66;
 		
 		public function Cells()
 		{
@@ -51,7 +50,7 @@ package com.plantpinball.playfield.display
 			resetFileStatus();
 			resetRowAnimation();
 			
-			makeRow(_yMultiplier * _yOffset);
+			makeRow(_yMultiplier * LayoutUtil.CELL_Y_SPACING);
 			makeCellsActive();
 			
 			dispatchEvent(new PlantPinballEvent(PlantPinballEvent.ROW_CLEARED));
@@ -131,12 +130,5 @@ package com.plantpinball.playfield.display
 		{
 			return _yMultiplier;
 		}
-
-		public function get yOffset():int
-		{
-			return _yOffset;
-		}
-
-
 	}
 }
