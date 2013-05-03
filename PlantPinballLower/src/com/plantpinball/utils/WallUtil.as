@@ -175,6 +175,9 @@ package com.plantpinball.utils
 				case 52: //right bumper
 					wall.push(new b2Vec2(473.1, 869.8), new b2Vec2(477.95, 863.15), new b2Vec2(489.95, 933.05), new b2Vec2(448.7, 964.55), new b2Vec2(448.2, 953.9));
 					break;
+				case 53: //ball holder
+					wall.push(new b2Vec2(636.25, 1286.7), new b2Vec2(636.25, 1254.95), new b2Vec2(683.25, 1273.95), new b2Vec2(683.25, 1286.7));
+					break;
 
 			}
 			

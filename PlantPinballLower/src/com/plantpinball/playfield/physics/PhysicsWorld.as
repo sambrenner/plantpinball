@@ -44,7 +44,7 @@ package com.plantpinball.playfield.physics
 			makeWalls();
 			makeFlippers();
 			makeTargets();
-			makeBall(SizeUtil.width / 3, SizeUtil.height / 2);
+			makeBall(LayoutUtil.INITIAL_BALL_POS);
 			addContactListeners();
 		}
 		
@@ -100,7 +100,7 @@ package com.plantpinball.playfield.physics
 			var bodyPoly:b2PolygonShape = new b2PolygonShape();
 			var bodyFix:b2FixtureDef = new b2FixtureDef();
 			
-			for(var i:int = 1; i<=52; i++)
+			for(var i:int = 1; i<=53; i++)
 			{
 				var vertexArray:Array = WallUtil.getWall(i);
 				
@@ -178,8 +178,6 @@ package com.plantpinball.playfield.physics
 		
 		private function makeTargets():void
 		{
-			var y:Number = 0.2;
-			
 			for(var i:int = 0; i < _numTargets; i++)
 			{
 				var body:b2Body;
@@ -211,8 +209,8 @@ package com.plantpinball.playfield.physics
 			}
 		}
 		
-		public function makeBall(x:int, y:int):void 
-		{
+		public function makeBall(point:b2Vec2):void 
+		{	
 			if(_ball) this.DestroyBody(_ball);
 			
 			var fd:b2FixtureDef;
@@ -223,11 +221,19 @@ package com.plantpinball.playfield.physics
 			fd.shape = circDef;
 			fd.density = 2.0;
 			fd.friction = 1.0;
-			fd.restitution = 0.1;
-			bodyDefC.position.Set(x / PPM, y / PPM);
+			fd.restitution = 0.2;
+			bodyDefC.position.Set(point.x / PPM, point.y / PPM);
 			_ball = this.CreateBody(bodyDefC);
 			_ball.SetBullet(true);
 			_ball.CreateFixture(fd);
+		}
+		
+		public function launchBall():void
+		{
+			if(_ball.IsAwake()) return;
+			
+			var currentPos:b2Vec2 = _ball.GetPosition();
+			_ball.ApplyImpulse(new b2Vec2(currentPos.x, currentPos.y - 200) ,currentPos)
 		}
 		
 		private function addContactListeners():void

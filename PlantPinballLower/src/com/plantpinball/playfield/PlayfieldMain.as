@@ -10,6 +10,7 @@ package com.plantpinball.playfield
 	import com.plantpinball.playfield.display.SolidSurfaces;
 	import com.plantpinball.playfield.display.Targets;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
+	import com.plantpinball.utils.LayoutUtil;
 	import com.plantpinball.utils.SizeUtil;
 	
 	import flash.display.Sprite;
@@ -67,7 +68,7 @@ package com.plantpinball.playfield
 			addChild(_root);
 			
 			_cells = new Cells();
-			_cells.y = 100;
+			_cells.y = LayoutUtil.CELL_Y_OFFSET;
 			_cells.addEventListener(PlantPinballEvent.ROW_CLEARED, onRowCleared);
 			addChild(_cells);
 		}
@@ -122,19 +123,21 @@ package com.plantpinball.playfield
 		{
 			var data:TargetValueObject = event.data as TargetValueObject;
 			
-			_ball.gotoAndPlay(2);
 			_cells.hitCell(data.id);			
 		}
 		
 		private function onRowCleared(e:PlantPinballEvent):void
 		{
-			_physics.moveTargets(_cells.y + ((_cells.yMultiplier + 2.5) * _cells.yOffset));
+			_physics.moveTargets(_cells.y + ((_cells.yMultiplier + 2.5) * LayoutUtil.CELL_Y_SPACING));
 		}
 		
 		private function onKeyDown(event:KeyboardEvent):void
 		{
 			switch(event.keyCode)
 			{
+				case 80:
+					_physics.launchBall();
+					break;
 				case 90:
 					_physics.leftFlipperOn = true;
 					break;
@@ -159,7 +162,7 @@ package com.plantpinball.playfield
 		
 		private function onMouseUp(event:MouseEvent):void
 		{
-			_physics.makeBall(event.stageX, event.stageY);			
+			_physics.makeBall(new b2Vec2(event.stageX, event.stageY));			
 		}
 	}
 }
