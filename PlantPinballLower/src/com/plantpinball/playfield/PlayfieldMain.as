@@ -123,6 +123,7 @@ package com.plantpinball.playfield
 		{
 			var data:TargetValueObject = event.data as TargetValueObject;
 			
+			_ball.gotoAndPlay(2);
 			_cells.hitCell(data.id);			
 		}
 		
