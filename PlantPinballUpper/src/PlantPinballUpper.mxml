@@ -7,12 +7,20 @@
 	<fx:Script>
 		<![CDATA[
 			import com.plantpinball.utils.LocalConnectionUtil;
+			import com.plantpinball.video.VideoPlayer;
 			
 			private var _localConnectionUtil:LocalConnectionUtil;
+			private var _videoPlayer:VideoPlayer;
 			
 			private function init():void 
 			{
 				initLocalConnection();
+				initVisuals();
+			}
+			
+			private function initVisuals():void
+			{
+				
 			}
 			
 			private function initLocalConnection():void

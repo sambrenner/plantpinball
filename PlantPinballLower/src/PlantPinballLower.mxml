@@ -10,13 +10,17 @@
 <fx:Script>
 		<![CDATA[
 			import com.plantpinball.playfield.PlayfieldMain;
-			import com.plantpinball.utils.SizeUtil;
+			import com.plantpinball.playfield.display.SolidSurfaces;
 			import com.plantpinball.utils.LocalConnectionUtil;
+			import com.plantpinball.utils.SizeUtil;
+			import com.plantpinball.video.VideoPlayer;
 			
 			import mx.core.UIComponent;
 				
 			private var _appContainer:UIComponent;
 			private var _playfield:PlayfieldMain;
+			private var _solidSurfaces:SolidSurfaces;
+			private var _videoPlayer:VideoPlayer;
 			private var _localConnectionUtil:LocalConnectionUtil;
 								
 			private function init():void
@@ -44,8 +48,15 @@
 				_playfield = new PlayfieldMain(stage);
 				_playfield.init();
 				
+				_videoPlayer = new VideoPlayer();
+				//_videoPlayer.loadVideo("video/test.flv", 360, 240);
+				
+				_solidSurfaces = new SolidSurfaces();
+				
 				_appContainer = new UIComponent();
 				_appContainer.addChild(_playfield);
+				_appContainer.addChild(_videoPlayer);
+				_appContainer.addChild(_solidSurfaces);
 				
 				addElement(_appContainer);
 			}

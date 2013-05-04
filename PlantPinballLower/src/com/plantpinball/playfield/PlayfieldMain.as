@@ -7,7 +7,6 @@ package com.plantpinball.playfield
 	import com.plantpinball.playfield.display.Cells;
 	import com.plantpinball.playfield.display.Flippers;
 	import com.plantpinball.playfield.display.Root;
-	import com.plantpinball.playfield.display.SolidSurfaces;
 	import com.plantpinball.playfield.display.Targets;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
 	import com.plantpinball.utils.LayoutUtil;
@@ -21,6 +20,7 @@ package com.plantpinball.playfield
 	
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.b2DebugDraw;
+	import com.plantpinball.playfield.display.Droplets;
 	
 	public class PlayfieldMain extends Sprite
 	{
@@ -29,10 +29,10 @@ package com.plantpinball.playfield
 		
 		private var _cells:Cells;
 		private var _flippers:Flippers;
-		private var _solidSurfaces:SolidSurfaces;
 		private var _ball:Ball;
 		private var _targets:Targets;
 		private var _root:Root;
+		private var _droplets:Droplets;
 		
 		public function PlayfieldMain(stage:Stage)
 		{
@@ -67,6 +67,10 @@ package com.plantpinball.playfield
 			_root.x = SizeUtil.width / 2;
 			addChild(_root);
 			
+			_droplets = new Droplets();
+			_droplets.y = 1100;
+			addChild(_droplets);
+			
 			_cells = new Cells();
 			_cells.y = LayoutUtil.CELL_Y_OFFSET;
 			_cells.addEventListener(PlantPinballEvent.ROW_CLEARED, onRowCleared);
@@ -75,9 +79,6 @@ package com.plantpinball.playfield
 				
 		private function makePhysicsGraphics():void
 		{
-			_solidSurfaces = new SolidSurfaces();
-			addChild(_solidSurfaces);
-			
 			_flippers = new Flippers();
 			_flippers.y = 1138;
 			addChild(_flippers);

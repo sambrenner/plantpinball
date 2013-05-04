@@ -56,7 +56,7 @@ package com.plantpinball.playfield.physics
 		{
 			this.Step(TIMESTEP, ITERATIONS, ITERATIONS);
 			this.ClearForces();
-			this.DrawDebugData();
+			//this.DrawDebugData();
 			
 			var ballPos:b2Vec2 = _ball.GetPosition();
 			
