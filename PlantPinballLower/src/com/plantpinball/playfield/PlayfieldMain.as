@@ -5,7 +5,10 @@ package com.plantpinball.playfield
 	import com.plantpinball.playfield.display.Background;
 	import com.plantpinball.playfield.display.Ball;
 	import com.plantpinball.playfield.display.Cells;
+	import com.plantpinball.playfield.display.Droplets;
 	import com.plantpinball.playfield.display.Flippers;
+	import com.plantpinball.playfield.display.ObstacleFungus;
+	import com.plantpinball.playfield.display.ObstacleTrample;
 	import com.plantpinball.playfield.display.Root;
 	import com.plantpinball.playfield.display.Targets;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
@@ -20,12 +23,13 @@ package com.plantpinball.playfield
 	
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.b2DebugDraw;
-	import com.plantpinball.playfield.display.Droplets;
+	import com.greensock.TweenLite;
 	
 	public class PlayfieldMain extends Sprite
 	{
 		private var _physics:PhysicsWorld;
 		private var _stage:Stage;
+		private var _rows:int = 0;
 		
 		private var _cells:Cells;
 		private var _flippers:Flippers;
@@ -33,6 +37,8 @@ package com.plantpinball.playfield
 		private var _targets:Targets;
 		private var _root:Root;
 		private var _droplets:Droplets;
+		private var _obstacleFungus:ObstacleFungus;
+		private var _obstacleTrample:ObstacleTrample;
 		
 		public function PlayfieldMain(stage:Stage)
 		{
@@ -102,6 +108,27 @@ package com.plantpinball.playfield
 			_physics.SetDebugDraw(debugDraw);
 		}
 		
+		private function makeObstacles():void
+		{
+			_physics.makeObstacles();
+			
+			_obstacleFungus = new ObstacleFungus();
+			_obstacleFungus.x = SizeUtil.width * (1 - LayoutUtil.OBSTACLE_X);
+			_obstacleFungus.y = SizeUtil.height * LayoutUtil.FUNGUS_OBSTACLE_Y;
+			
+			_obstacleTrample = new ObstacleTrample();
+			_obstacleTrample.x = SizeUtil.width * LayoutUtil.OBSTACLE_X;
+			_obstacleTrample.y = SizeUtil.height * LayoutUtil.TRAMPLE_OBSTACLE_Y;
+			
+			_obstacleTrample.alpha = _obstacleFungus.alpha = 0;
+			
+			addChild(_obstacleFungus);
+			addChild(_obstacleTrample);
+			
+			TweenLite.to(_obstacleFungus, .5, { alpha: 1 });
+			TweenLite.to(_obstacleTrample, .5, { alpha: 1 });
+		}
+		
 		private function update(event:Event):void
 		{
 			var instant:Boolean = (event == null);
@@ -133,6 +160,10 @@ package com.plantpinball.playfield
 		{
 			_physics.moveTargets(_cells.y + ((_cells.yMultiplier + 2.5) * LayoutUtil.CELL_Y_SPACING));
 			_targets.activateAll();
+			
+			_rows++;
+			
+			if(_rows == 3) makeObstacles();
 		}
 		
 		private function onKeyDown(event:KeyboardEvent):void

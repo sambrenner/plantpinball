@@ -12,6 +12,9 @@ package com.plantpinball.utils
 		public static const FLIPPER_Y:Number = 0.89;
 		public static const LEFT_FLIPPER_X:Number = 0.34;
 		public static const RIGHT_FLIPPER_X:Number = 0.57;
+		public static const TRAMPLE_OBSTACLE_Y:Number = 0.17;
+		public static const FUNGUS_OBSTACLE_Y:Number = 0.42;
+		public static const OBSTACLE_X:Number = 0.12;
 		
 		//pixel values
 		public static const CELL_Y_SPACING:int = 66;

@@ -36,6 +36,8 @@ package com.plantpinball.playfield.physics
 		private var _previousBallPosition:b2Vec2;
 		private var _numTargets:int = LayoutUtil.NUM_TARGETS;
 		private var _targets:Vector.<b2Body> = new Vector.<b2Body>(_numTargets, true);
+		private var _trampleObstacle:b2Body;
+		private var _fungusObstacle:b2Body;
 			
 		public function PhysicsWorld(gravity:b2Vec2, doSleep:Boolean)
 		{
@@ -66,6 +68,28 @@ package com.plantpinball.playfield.physics
 			checkBallStuck(ballPos);
 		}
 		
+		public function makeObstacles():void
+		{
+			var fd:b2FixtureDef;
+			var bodyDefC:b2BodyDef = new b2BodyDef();
+			bodyDefC.type = b2Body.b2_dynamicBody;
+			var circDef:b2CircleShape= new b2CircleShape(25 / PPM);
+			fd = new b2FixtureDef();
+			fd.shape = circDef;
+			fd.density = 2.0;
+			fd.friction = 0;
+			fd.restitution = 0.5;
+			bodyDefC.position.Set(LayoutUtil.OBSTACLE_X * SizeUtil.width / PPM, LayoutUtil.TRAMPLE_OBSTACLE_Y * SizeUtil.height / PPM);
+			_trampleObstacle = this.CreateBody(bodyDefC);
+			_trampleObstacle.SetType(b2Body.b2_staticBody);
+			_trampleObstacle.CreateFixture(fd);
+			
+			bodyDefC.position.Set((1-LayoutUtil.OBSTACLE_X) * SizeUtil.width / PPM, LayoutUtil.FUNGUS_OBSTACLE_Y * SizeUtil.height / PPM);
+			_fungusObstacle = this.CreateBody(bodyDefC);
+			_fungusObstacle.SetType(b2Body.b2_staticBody);
+			_fungusObstacle.CreateFixture(fd);
+		}
+		
 		private function checkTargetHit():void
 		{
 			for(var i:int = 0; i<_numTargets; i++) 
@@ -75,7 +99,6 @@ package com.plantpinball.playfield.physics
 				
 				if(tVO.hit)
 				{
-					trace("Target " + tVO.id + " has been hit!");
 					this.dispatchEvent(new PlantPinballEvent(PlantPinballEvent.TARGET_HIT, tVO));
 					tVO.hit = false;
 				}
@@ -251,7 +274,6 @@ package com.plantpinball.playfield.physics
 		{
 			if(currentBallPosition.y > _ballLostYBound)
 			{
-				//TODO: Ball count, game over functionality
 				resetBall();
 			}
 		}
