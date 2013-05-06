@@ -125,12 +125,14 @@ package com.plantpinball.playfield
 			var data:TargetValueObject = event.data as TargetValueObject;
 			
 			_ball.gotoAndPlay(2);
-			_cells.hitCell(data.id);			
+			_cells.hitCell(data.id);
+			_targets.unactivate(data.id);
 		}
 		
 		private function onRowCleared(e:PlantPinballEvent):void
 		{
 			_physics.moveTargets(_cells.y + ((_cells.yMultiplier + 2.5) * LayoutUtil.CELL_Y_SPACING));
+			_targets.activateAll();
 		}
 		
 		private function onKeyDown(event:KeyboardEvent):void
