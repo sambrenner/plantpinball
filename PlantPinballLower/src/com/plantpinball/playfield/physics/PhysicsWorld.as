@@ -11,13 +11,14 @@ package com.plantpinball.playfield.physics
 	
 	import Box2D.Collision.Shapes.b2CircleShape;
 	import Box2D.Collision.Shapes.b2PolygonShape;
+	import Box2D.Common.Math.b2Math;
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.b2Body;
 	import Box2D.Dynamics.b2BodyDef;
 	import Box2D.Dynamics.b2FixtureDef;
 	import Box2D.Dynamics.b2World;
 	import Box2D.Dynamics.Joints.b2RevoluteJointDef;
-	import Box2D.Common.Math.b2Math;
+	import com.plantpinball.playfield.data.ObstacleType;
 	
 	public class PhysicsWorld extends b2World
 	{
@@ -38,6 +39,7 @@ package com.plantpinball.playfield.physics
 		private var _targets:Vector.<b2Body> = new Vector.<b2Body>(_numTargets, true);
 		private var _trampleObstacle:b2Body;
 		private var _fungusObstacle:b2Body;
+		private var _obstacles:Vector.<b2Body>;
 			
 		public function PhysicsWorld(gravity:b2Vec2, doSleep:Boolean)
 		{
@@ -64,6 +66,7 @@ package com.plantpinball.playfield.physics
 			
 			checkInput();
 			checkTargetHit();
+			if(_obstacles) checkObstacleHit();
 			checkBallLost(ballPos);
 			checkBallStuck(ballPos);
 		}
@@ -88,6 +91,36 @@ package com.plantpinball.playfield.physics
 			_fungusObstacle = this.CreateBody(bodyDefC);
 			_fungusObstacle.SetType(b2Body.b2_staticBody);
 			_fungusObstacle.CreateFixture(fd);
+			
+			var trampleVO:TargetValueObject = new TargetValueObject();
+			trampleVO.bodyType = BodyType.OBSTACLE;
+			trampleVO.hit = false;
+			trampleVO.id = ObstacleType.TRAMPLE;
+						
+			var fungusVO:TargetValueObject = new TargetValueObject();
+			fungusVO.bodyType = BodyType.OBSTACLE;
+			fungusVO.hit = false;
+			fungusVO.id = ObstacleType.FUNGUS;
+			
+			_trampleObstacle.SetUserData(trampleVO);
+			_fungusObstacle.SetUserData(fungusVO);
+			
+			_obstacles = new <b2Body>[_trampleObstacle,_fungusObstacle];
+		}
+		
+		private function checkObstacleHit():void
+		{
+			for(var i:int = 0; i<_obstacles.length; i++)
+			{
+				var o:b2Body = _obstacles[i];
+				var oVO:TargetValueObject = o.GetUserData() as TargetValueObject;
+				
+				if(oVO.hit)
+				{
+					this.dispatchEvent(new PlantPinballEvent(PlantPinballEvent.OBSTACLE_HIT, oVO));
+					oVO.hit = false;
+				}
+			}
 		}
 		
 		private function checkTargetHit():void

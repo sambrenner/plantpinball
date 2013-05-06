@@ -111,6 +111,7 @@ package com.plantpinball.playfield
 		private function makeObstacles():void
 		{
 			_physics.makeObstacles();
+			_physics.addEventListener(PlantPinballEvent.OBSTACLE_HIT, onObstacleHit);
 			
 			_obstacleFungus = new ObstacleFungus();
 			_obstacleFungus.x = SizeUtil.width * (1 - LayoutUtil.OBSTACLE_X);
@@ -154,6 +155,13 @@ package com.plantpinball.playfield
 			_ball.gotoAndPlay(2);
 			_cells.hitCell(data.id);
 			_targets.unactivate(data.id);
+		}
+		
+		private function onObstacleHit(event:PlantPinballEvent):void
+		{
+			var data:TargetValueObject = event.data as TargetValueObject;
+			
+			trace("OBSTACLE " + data.id + " HIT");
 		}
 		
 		private function onRowCleared(e:PlantPinballEvent):void

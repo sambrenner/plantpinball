@@ -21,7 +21,7 @@ package com.plantpinball.playfield.physics.listeners
 			
 			if(userDataA)
 			{
-				if((userDataA as BodyValueObject).bodyType == BodyType.TARGET) 
+				if((userDataA as BodyValueObject).bodyType == BodyType.TARGET || (userDataA as BodyValueObject).bodyType == BodyType.OBSTACLE) 
 				{
 					(userDataA as TargetValueObject).hit = true;
 				}
@@ -29,7 +29,7 @@ package com.plantpinball.playfield.physics.listeners
 			
 			if(userDataB)
 			{
-				if((userDataB as BodyValueObject).bodyType == BodyType.TARGET)
+				if((userDataB as BodyValueObject).bodyType == BodyType.TARGET || (userDataB as BodyValueObject).bodyType == BodyType.OBSTACLE)
 				{
 					(userDataB as TargetValueObject).hit = true;
 				}	
