@@ -46,5 +46,15 @@ package com.plantpinball.playfield.display
 		{
 			_targets[id].unactivate();
 		}
+		
+		public function show():void
+		{
+			TweenLite.to(this, .4, { alpha:1 });
+		}
+		
+		public function hide():void
+		{
+			TweenLite.to(this, .4, { alpha:0 });
+		}
 	}
 }

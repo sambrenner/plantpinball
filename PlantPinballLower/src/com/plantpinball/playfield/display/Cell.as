@@ -24,6 +24,11 @@ package com.plantpinball.playfield.display
 		
 		public function reset():void
 		{
+			gotoAndStop(1);
+		}
+		
+		public function showEnd():void
+		{
 			gotoAndStop(14);
 		}
 		

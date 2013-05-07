@@ -1,12 +1,16 @@
 package com.plantpinball.playfield
 {
+	import com.greensock.TweenLite;
 	import com.plantpinball.events.PlantPinballEvent;
+	import com.plantpinball.playfield.data.GameplayMode;
+	import com.plantpinball.playfield.data.ObstacleType;
 	import com.plantpinball.playfield.data.TargetValueObject;
 	import com.plantpinball.playfield.display.Background;
 	import com.plantpinball.playfield.display.Ball;
 	import com.plantpinball.playfield.display.Cells;
 	import com.plantpinball.playfield.display.Droplets;
 	import com.plantpinball.playfield.display.Flippers;
+	import com.plantpinball.playfield.display.Fungus;
 	import com.plantpinball.playfield.display.ObstacleFungus;
 	import com.plantpinball.playfield.display.ObstacleTrample;
 	import com.plantpinball.playfield.display.Root;
@@ -23,13 +27,13 @@ package com.plantpinball.playfield
 	
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.b2DebugDraw;
-	import com.greensock.TweenLite;
 	
 	public class PlayfieldMain extends Sprite
 	{
 		private var _physics:PhysicsWorld;
 		private var _stage:Stage;
 		private var _rows:int = 0;
+		private var _pausePhysics:Boolean;
 		
 		private var _cells:Cells;
 		private var _flippers:Flippers;
@@ -37,6 +41,7 @@ package com.plantpinball.playfield
 		private var _targets:Targets;
 		private var _root:Root;
 		private var _droplets:Droplets;
+		private var _fungus:Fungus;
 		private var _obstacleFungus:ObstacleFungus;
 		private var _obstacleTrample:ObstacleTrample;
 		
@@ -54,8 +59,11 @@ package com.plantpinball.playfield
 			_stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 			_stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			
+			_pausePhysics = false;
+			
 			_physics = new PhysicsWorld(new b2Vec2(0.0, 16.0), true);
 			_physics.addEventListener(PlantPinballEvent.TARGET_HIT, onTargetHit);
+			_physics.gameplayMode = GameplayMode.NORMAL;
 			_physics.init();
 			
 			makeNonPhysicsGraphics();
@@ -136,7 +144,8 @@ package com.plantpinball.playfield
 			
 			var targetPositions:Vector.<b2Vec2> = _physics.targetPositions;
 			
-			_physics.update();
+			if(!_pausePhysics) _physics.update();
+			
 			_flippers.update(_physics.flipperAngles);
 			_targets.update(targetPositions, instant);
 			_root.update(targetPositions[0].y + 60, instant);
@@ -161,7 +170,49 @@ package com.plantpinball.playfield
 		{
 			var data:TargetValueObject = event.data as TargetValueObject;
 			
-			trace("OBSTACLE " + data.id + " HIT");
+			_pausePhysics = true;
+			
+			switch(data.id)
+			{
+				case ObstacleType.FUNGUS:
+					_physics.gameplayMode = GameplayMode.OBSTACLE_FUNGUS;
+					_physics.enterObstacleMode();
+										
+					_fungus = new Fungus();
+					_fungus.x = SizeUtil.width / 2;
+					_fungus.y = _cells.y + ((_cells.yMultiplier + 2.5) * LayoutUtil.CELL_Y_SPACING);
+					_fungus.addEventListener(PlantPinballEvent.ANIMATION_PING, onFungusAnimationPing);
+					_fungus.addEventListener(PlantPinballEvent.ANIMATION_PING, onFungusAnimationComplete);
+					
+					addChild(_fungus);
+					_fungus.gotoAndPlay(2);
+					break;
+				case ObstacleType.TRAMPLE:
+					_physics.gameplayMode = GameplayMode.OBSTACLE_TRAMPLE;
+					//move targets up
+					//replace root with sideways root
+					//TBD
+					break;
+			}
+		}
+		
+		private function onObstacleComplete(event:PlantPinballEvent):void
+		{
+			
+		}
+		
+		private function onFungusAnimationPing(event:PlantPinballEvent):void
+		{
+			_fungus.removeEventListener(PlantPinballEvent.ANIMATION_PING, onFungusAnimationPing);
+			
+			_targets.hide();
+			_root.hideCap();
+			_cells.rollbackRow();	
+		}
+		
+		private function onFungusAnimationComplete(event:PlantPinballEvent):void
+		{
+			_pausePhysics = false;
 		}
 		
 		private function onRowCleared(e:PlantPinballEvent):void

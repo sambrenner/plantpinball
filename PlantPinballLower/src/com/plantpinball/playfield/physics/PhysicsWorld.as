@@ -3,6 +3,7 @@ package com.plantpinball.playfield.physics
 	import com.plantpinball.events.PlantPinballEvent;
 	import com.plantpinball.playfield.data.BodyType;
 	import com.plantpinball.playfield.data.BodyValueObject;
+	import com.plantpinball.playfield.data.ObstacleType;
 	import com.plantpinball.playfield.data.TargetValueObject;
 	import com.plantpinball.playfield.physics.listeners.TargetContactListener;
 	import com.plantpinball.utils.LayoutUtil;
@@ -18,7 +19,7 @@ package com.plantpinball.playfield.physics
 	import Box2D.Dynamics.b2FixtureDef;
 	import Box2D.Dynamics.b2World;
 	import Box2D.Dynamics.Joints.b2RevoluteJointDef;
-	import com.plantpinball.playfield.data.ObstacleType;
+	import com.plantpinball.playfield.data.GameplayMode;
 	
 	public class PhysicsWorld extends b2World
 	{
@@ -26,6 +27,8 @@ package com.plantpinball.playfield.physics
 		private static const ITERATIONS:uint = 10;
 		private static const PPM:Number = 30;
 		private static const RAD_TO_DEG:Number = 57.296;
+		
+		private var _gameplayMode:String;
 		
 		private var _leftFlipperOn:Boolean = false;
 		private var _rightFlipperOn:Boolean = false;
@@ -345,6 +348,27 @@ package com.plantpinball.playfield.physics
 			}
 		}
 		
+		public function enterObstacleMode():void
+		{
+			switch(_gameplayMode)
+			{
+				case GameplayMode.OBSTACLE_FUNGUS:
+					//remove targets
+					//make SCNiche target + listener
+					break;
+				case GameplayMode.OBSTACLE_TRAMPLE:
+					
+					break;
+			}
+		}
+		
+		public function exitObstacleMode():void
+		{
+			//if targets are inactive, activate them
+			//if extra targets from previous mode, remove them
+			//remove the target for the obstacle mode just played through
+		}
+		
 		public function set rightFlipperOn(value:Boolean):void
 		{
 			_rightFlipperOn = value;
@@ -385,5 +409,11 @@ package com.plantpinball.playfield.physics
 			
 			return positions;
 		}
+
+		public function set gameplayMode(value:String):void
+		{
+			_gameplayMode = value;
+		}
+
 	}
 }

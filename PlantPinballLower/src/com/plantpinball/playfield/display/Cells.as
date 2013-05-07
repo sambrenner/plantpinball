@@ -9,7 +9,7 @@ package com.plantpinball.playfield.display
 	public class Cells extends MovieClip
 	{
 		private var _cellHolder:MovieClip;
-		private var _newestCells:Vector.<Cell> = new Vector.<Cell>(5);
+		private var _newestCells:Vector.<Cell>;
 		private var _fileIsHit:Vector.<Boolean> = new Vector.<Boolean>(5);
 		private var _yMultiplier:int = 0;
 		
@@ -33,6 +33,14 @@ package com.plantpinball.playfield.display
 			_newestCells[cellId].animateDivision();
 		}
 		
+		public function rollbackRow():void
+		{
+			for(var i:int=0; i<_newestCells.length; i++)
+			{
+				_newestCells[i].reset();
+			}
+		}
+		
 		private function isRowComplete():Boolean
 		{
 			for(var i:int = 0; i<_fileIsHit.length; i++)
@@ -48,7 +56,7 @@ package com.plantpinball.playfield.display
 			_yMultiplier += 1;
 			
 			resetFileStatus();
-			resetRowAnimation();
+			finishRowAnimation();
 			
 			makeRow(_yMultiplier * LayoutUtil.CELL_Y_SPACING);
 			makeCellsActive();
@@ -56,11 +64,11 @@ package com.plantpinball.playfield.display
 			dispatchEvent(new PlantPinballEvent(PlantPinballEvent.ROW_CLEARED));
 		}
 		
-		private function resetRowAnimation():void
+		private function finishRowAnimation():void
 		{
 			for(var i:int=0; i<_newestCells.length; i++)
 			{
-				_newestCells[i].reset();
+				_newestCells[i].showEnd();
 			}
 		}
 		
@@ -74,6 +82,9 @@ package com.plantpinball.playfield.display
 		
 		private function makeRow(yPos:int):void
 		{
+			if(!_newestCells)
+				_newestCells = new Vector.<Cell>(5);
+			
 			for(var i:int=0; i<_newestCells.length; i++)
 			{
 				var cell:Cell = makeCell(i);
