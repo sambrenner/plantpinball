@@ -2,6 +2,7 @@ package com.plantpinball.playfield
 {
 	import com.greensock.TweenLite;
 	import com.plantpinball.events.PlantPinballEvent;
+	import com.plantpinball.playfield.data.AppCommunicationMessage;
 	import com.plantpinball.playfield.data.BodyType;
 	import com.plantpinball.playfield.data.GameplayMode;
 	import com.plantpinball.playfield.data.ObstacleType;
@@ -20,8 +21,10 @@ package com.plantpinball.playfield
 	import com.plantpinball.playfield.display.text.FungusInstructions;
 	import com.plantpinball.playfield.display.text.FungusPopup;
 	import com.plantpinball.playfield.display.text.PopupText;
+	import com.plantpinball.playfield.display.text.TramplePopup;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
 	import com.plantpinball.utils.LayoutUtil;
+	import com.plantpinball.utils.LocalConnectionUtil;
 	import com.plantpinball.utils.SizeUtil;
 	
 	import flash.display.Sprite;
@@ -32,11 +35,14 @@ package com.plantpinball.playfield
 	
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.b2DebugDraw;
+	import com.plantpinball.playfield.display.text.TrampleInstructions;
+	import com.plantpinball.playfield.display.SlantedRoot;
 	
 	public class PlayfieldMain extends Sprite
 	{
 		private var _physics:PhysicsWorld;
 		private var _stage:Stage;
+		private var _localConnectionUtil:LocalConnectionUtil;
 		private var _rows:int = 0;
 		private var _pausePhysics:Boolean;
 		
@@ -51,9 +57,12 @@ package com.plantpinball.playfield
 		private var _obstacleTrample:ObstacleTrample;
 		private var _solidSurfaces:SolidSurfaces;
 		private var _popup:PopupText;
+		private var _gameplayMode:String;
+		private var _slantedRoot:SlantedRoot;
 		
-		public function PlayfieldMain(stage:Stage)
+		public function PlayfieldMain(stage:Stage, localConnectionUtil:LocalConnectionUtil)
 		{
+			_localConnectionUtil = localConnectionUtil;
 			_stage = stage;
 			
 			super();
@@ -70,7 +79,7 @@ package com.plantpinball.playfield
 			
 			_physics = new PhysicsWorld(new b2Vec2(0.0, 16.0), true);
 			_physics.addEventListener(PlantPinballEvent.TARGET_HIT, onTargetHit);
-			_physics.gameplayMode = GameplayMode.NORMAL;
+			_physics.gameplayMode = _gameplayMode = GameplayMode.NORMAL;
 			_physics.init();
 			
 			makeNonPhysicsGraphics();
@@ -87,6 +96,10 @@ package com.plantpinball.playfield
 			_root = new Root();
 			_root.x = SizeUtil.width / 2;
 			addChild(_root);
+			
+			_slantedRoot = new SlantedRoot();
+			_slantedRoot.visible = false;
+			addChild(_slantedRoot);
 			
 			_droplets = new Droplets();
 			_droplets.y = 1100;
@@ -194,7 +207,7 @@ package com.plantpinball.playfield
 			switch(data.id)
 			{
 				case ObstacleType.FUNGUS:
-					_physics.gameplayMode = GameplayMode.OBSTACLE_FUNGUS;
+					_physics.gameplayMode = _gameplayMode = GameplayMode.OBSTACLE_FUNGUS;
 					_physics.enterObstacleMode();
 					
 					_fungus = new Fungus();
@@ -207,12 +220,43 @@ package com.plantpinball.playfield
 					_fungus.gotoAndPlay(2);
 					break;
 				case ObstacleType.TRAMPLE:
-					_physics.gameplayMode = GameplayMode.OBSTACLE_TRAMPLE;
-					//move targets up
-					//replace root with sideways root
-					//TBD
+					_physics.gameplayMode = _gameplayMode = GameplayMode.OBSTACLE_TRAMPLE;
+					//_localConnectionUtil.send(AppCommunicationMessage.PLAY_TRAMPLE);
+					
+					TweenLite.delayedCall(2, initTrampleMode);
 					break;
 			}
+		}
+		
+		private function initTrampleMode():void
+		{
+			_slantedRoot.x = _root.x;
+			_slantedRoot.y = _root.targetY;
+			_slantedRoot.visible = true;
+			
+			_root.hideUpperRoot();
+			_root.rotateRootCap();
+			
+			_slantedRoot.gotoAndPlay(2);
+			
+			_targets.activateAll();
+			
+			removeChild(_cells);
+			_cells = new Cells();
+			addChild(_cells);
+			_cells.visible = false;
+			
+			TweenLite.delayedCall(2,showTramplePopups);
+		}
+		
+		private function showTramplePopups():void
+		{
+			_popup = new TramplePopup();
+			_popup.x = SizeUtil.width / 2;
+			_popup.y = SizeUtil.height / 2;
+			_popup.addEventListener(PlantPinballEvent.TEXT_COMPLETE, onPopupTextComplete);
+			addChild(_popup);
+			_popup.show();
 		}
 		
 		private function onObstacleComplete(event:PlantPinballEvent):void
@@ -222,7 +266,7 @@ package com.plantpinball.playfield
 			_targets.activateAll();
 			
 			_physics.exitObstacleMode();
-			_physics.gameplayMode = GameplayMode.NORMAL;
+			_physics.gameplayMode = _gameplayMode = GameplayMode.NORMAL;
 		}
 		
 		private function onFungusAnimationPing(event:PlantPinballEvent):void
@@ -252,9 +296,18 @@ package com.plantpinball.playfield
 			_popup.removeEventListener(PlantPinballEvent.TEXT_COMPLETE, onPopupTextComplete);
 			_popup.hide();
 			
-			_popup = new FungusInstructions();
+			switch(_gameplayMode)
+			{
+				case GameplayMode.OBSTACLE_FUNGUS:
+					_popup = new FungusInstructions();
+					_popup.y = _physics.targetPositions[0].y + (LayoutUtil.NICHE_Y_OFFSET * SizeUtil.height);
+					break;
+				case GameplayMode.OBSTACLE_TRAMPLE:
+					_popup = new TrampleInstructions();
+					_popup.y = _physics.targetPositions[0].y;
+			}
+			
 			_popup.x = SizeUtil.width / 2;
-			_popup.y = _physics.targetPositions[0].y + (LayoutUtil.NICHE_Y_OFFSET * SizeUtil.height);
 			_popup.addEventListener(PlantPinballEvent.TEXT_COMPLETE, onInstructionTextComplete);
 			addChild(_popup);
 			_popup.show();

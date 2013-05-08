@@ -9,6 +9,7 @@
 >
 	<fx:Script>
 		<![CDATA[
+			import com.plantpinball.display.DefaultScreenUpper;
 			import com.plantpinball.events.LocalConnectionEvent;
 			import com.plantpinball.playfield.data.AppCommunicationMessage;
 			import com.plantpinball.utils.LocalConnectionUtil;
@@ -32,6 +33,8 @@
 				addElement(_appContainer);
 				
 				_videoPlayer = new VideoPlayer();
+				
+				_appContainer.addChild(new DefaultScreenUpper());
 				_appContainer.addChild(_videoPlayer);
 			}
 			
@@ -49,6 +52,9 @@
 				{
 					case AppCommunicationMessage.PLAY_INTRO:
 						_videoPlayer.loadVideo("video/intro_upper.f4v",1024,768);
+						break;
+					case AppCommunicationMessage.PLAY_TRAMPLE:
+						_videoPlayer.loadVideo("video/trample.f4v",1024,768);
 						break;
 				}
 			}

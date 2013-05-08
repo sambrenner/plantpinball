@@ -2,7 +2,7 @@ package com.plantpinball.events
 {
 	import flash.events.Event;
 	
-	public class VideoEvent extends Event
+	public class VideoPlayerEvent extends Event
 	{
 		public static const VIDEO_STOPPED:String = "VIDEO_STOPPED";
 		public static const CUE_POINT_REACHED:String = "CUE_POINT_REACHED";
@@ -12,7 +12,7 @@ package com.plantpinball.events
 		public static const PLAYING:String = "PLAYING";
 		public static const PAUSED:String = "PAUSED";
 		
-		public function VideoEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
+		public function VideoPlayerEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			super(type, bubbles, cancelable);
 		}

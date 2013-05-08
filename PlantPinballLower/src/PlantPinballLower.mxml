@@ -9,8 +9,10 @@
 >
 <fx:Script>
 		<![CDATA[
-			import com.plantpinball.playfield.data.AppCommunicationMessage;
+			import com.plantpinball.display.DefaultScreenLower;
+			import com.plantpinball.events.VideoPlayerEvent;
 			import com.plantpinball.playfield.PlayfieldMain;
+			import com.plantpinball.playfield.data.AppCommunicationMessage;
 			import com.plantpinball.playfield.display.SolidSurfaces;
 			import com.plantpinball.utils.LocalConnectionUtil;
 			import com.plantpinball.utils.SizeUtil;
@@ -47,12 +49,12 @@
 			
 			private function initVisuals():void
 			{
-				_playfield = new PlayfieldMain(stage);
-				_playfield.init();
+				_playfield = new PlayfieldMain(stage, _localConnectionUtil);
 				
 				_videoPlayer = new VideoPlayer();
 				
 				_appContainer = new UIComponent();
+				_appContainer.addChild(new DefaultScreenLower());
 				_appContainer.addChild(_playfield);
 				_appContainer.addChild(_videoPlayer);
 				
@@ -61,13 +63,23 @@
 			
 			private function startIntro():void
 			{
-				_localConnectionUtil.send(AppCommunicationMessage.PLAY_INTRO);
-				_videoPlayer.loadVideo("video/intro_lower.f4v",720,1280);
+				//_localConnectionUtil.send(AppCommunicationMessage.PLAY_INTRO);
+				_videoPlayer.addEventListener(VideoPlayerEvent.VIDEO_STOPPED, onIntroEnd);
+				//_videoPlayer.loadVideo("video/intro_lower.f4v",720,1280);
+				
+				onIntroEnd(null);
 			}
 			
 			private function initKeyControls():void
 			{
 				stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+			}
+			
+			private function onIntroEnd(e:VideoPlayerEvent):void
+			{
+				_videoPlayer.removeEventListener(VideoPlayerEvent.VIDEO_STOPPED, onIntroEnd);
+				_videoPlayer.hide();
+				_playfield.init();
 			}
 			
 			private function onKeyUp(e:KeyboardEvent):void

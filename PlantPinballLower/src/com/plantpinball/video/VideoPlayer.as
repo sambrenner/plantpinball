@@ -1,6 +1,6 @@
 package com.plantpinball.video
 {
-	import com.plantpinball.events.VideoEvent;
+	import com.plantpinball.events.VideoPlayerEvent;
 	
 	import flash.display.Sprite;
 	import flash.events.AsyncErrorEvent;
@@ -62,12 +62,12 @@ package com.plantpinball.video
 		
 		private function onNetStatus(event:NetStatusEvent):void 
 		{
-			//trace(event.info.code);
+			trace(event.info.code);
 			
 			switch (event.info.code) 
 			{
 				case "NetStream.Play.Start":
-					dispatchEvent(new VideoEvent(VideoEvent.VIDEO_STARTED));
+					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_STARTED));
 					break;
 				case "NetConnection.Connect.Success":
 					connectStream();
@@ -76,7 +76,7 @@ package com.plantpinball.video
 					//trace("Stream not found: " + _flvLocation);
 					break;
 				case "NetStream.Play.Stop":
-					dispatchEvent(new VideoEvent(VideoEvent.VIDEO_STOPPED));
+					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_STOPPED));
 			}
 		}
 		
@@ -92,7 +92,7 @@ package com.plantpinball.video
 		
 		public function onCuePoint(infoObject:Object):void 
 		{
-			dispatchEvent(new VideoEvent(VideoEvent.CUE_POINT_REACHED));
+			dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.CUE_POINT_REACHED));
 		}
 		
 		public function mute():void
@@ -105,6 +105,16 @@ package com.plantpinball.video
 		{
 			_muted = false;
 			setVolume(1);
+		}
+		
+		public function show():void
+		{
+			this.visible = true;
+		}
+		
+		public function hide():void
+		{
+			this.visible = false;
 		}
 		
 		public function setVolume(volume:Number):void
