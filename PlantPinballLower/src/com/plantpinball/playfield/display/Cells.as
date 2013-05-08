@@ -1,5 +1,6 @@
 package com.plantpinball.playfield.display
 {
+	import com.greensock.TweenLite;
 	import com.plantpinball.events.PlantPinballEvent;
 	import com.plantpinball.utils.LayoutUtil;
 	import com.plantpinball.utils.SizeUtil;
@@ -11,11 +12,13 @@ package com.plantpinball.playfield.display
 		private var _cellHolder:MovieClip;
 		private var _newestCells:Vector.<Cell>;
 		private var _fileIsHit:Vector.<Boolean> = new Vector.<Boolean>(5);
-		private var _yMultiplier:int = 0;
+		private var _yMultiplier:int;
 		
-		public function Cells()
+		public function Cells(elongation:Boolean = false, yMultiplier:int = 0)
 		{
 			super();
+			
+			_yMultiplier = yMultiplier;
 			
 			_cellHolder = new MovieClip();
 			addChild(_cellHolder);
@@ -23,7 +26,11 @@ package com.plantpinball.playfield.display
 			addEventListener(PlantPinballEvent.ANIMATION_COMPLETE, onAnimationComplete);
 			
 			resetFileStatus();
-			makeRow(0);
+			if(elongation)
+				makeElongationRow();
+			else
+				makeRow(0);
+			
 			makeCellsActive();
 		}
 		
@@ -98,26 +105,43 @@ package com.plantpinball.playfield.display
 			}
 		}
 		
-		private function makeCell(fileId:int):Cell
+		private function makeElongationRow():void
+		{
+			if(!_newestCells)
+				_newestCells = new Vector.<Cell>(5);
+			
+			for(var i:int=0; i<_newestCells.length; i++)
+			{
+				var cell:Cell = makeCell(i, true);
+				cell.y = _yMultiplier * LayoutUtil.CELL_Y_SPACING;
+				
+				_newestCells[i] = cell;
+				_cellHolder.addChild(cell);
+				
+				TweenLite.to(cell, 1, { x: LayoutUtil.ELONGATION_CELL_POSITIONS[i].x, y: _yMultiplier * LayoutUtil.CELL_Y_SPACING + LayoutUtil.ELONGATION_CELL_POSITIONS[i].y }); 
+			}
+		}
+		
+		private function makeCell(fileId:int, elongation:Boolean = false):Cell
 		{
 			var newCell:Cell;
 			
 			switch(fileId)
 			{
 				case 0:
-					newCell = new CellA();
+					newCell = elongation ? new ElongationCellA : new CellA();
 					break;
 				case 1:
-					newCell = new CellB();
+					newCell = elongation ? new ElongationCellB : new CellB();
 					break;
 				case 2:
-					newCell = new CellC();
+					newCell = elongation ? new ElongationCellC : new CellC();
 					break;
 				case 3:
-					newCell = new CellD();
+					newCell = elongation ? new ElongationCellD : new CellD();
 					break;
 				case 4:
-					newCell = new CellE();
+					newCell = elongation ? new ElongationCellE : new CellE();
 					break;
 			}
 			

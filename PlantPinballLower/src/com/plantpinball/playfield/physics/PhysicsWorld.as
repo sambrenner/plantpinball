@@ -405,9 +405,11 @@ package com.plantpinball.playfield.physics
 					disableTargets();
 					makeNiche();
 					this.DestroyBody(_fungusObstacle);
+					if(_trampleObstacle) _trampleObstacle.SetActive(false);
 					break;
 				case GameplayMode.OBSTACLE_TRAMPLE:
 					this.DestroyBody(_trampleObstacle);
+					if(_fungusObstacle) _fungusObstacle.SetActive(false);
 					break;
 			}
 		}

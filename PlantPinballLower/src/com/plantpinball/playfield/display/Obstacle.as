@@ -9,9 +9,9 @@ package com.plantpinball.playfield.display
 			super();
 		}
 		
-		public function hide():void
+		public function hide(remove:Boolean):void
 		{
-			TweenLite.to(this, .8, {alpha:0, complete:removeMyself});
+			TweenLite.to(this, .8, {alpha:0, complete:remove ? removeMyself : null});
 		}
 		
 		private function removeMyself():void

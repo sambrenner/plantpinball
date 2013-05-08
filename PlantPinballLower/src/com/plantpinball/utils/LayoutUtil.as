@@ -1,5 +1,7 @@
 package com.plantpinball.utils
 {
+	import flash.geom.Point;
+	
 	import Box2D.Common.Math.b2Vec2;
 
 	public class LayoutUtil
@@ -22,6 +24,14 @@ package com.plantpinball.utils
 		public static const CELL_Y_SPACING:int = 66;
 		public static const CELL_Y_OFFSET:int = 160;
 		public static const INITIAL_BALL_POS:b2Vec2 = new b2Vec2(665,1230);
+		public static const ELONGATION_CELL_POSITIONS:Vector.<Point> = new <Point>
+		[
+			new Point(287,-127),
+			new Point(344,-87),
+			new Point(402,-57),
+			new Point(452,-25),
+			new Point(503,13)
+		];
 		
 		public function LayoutUtil()
 		{
