@@ -2,15 +2,23 @@
 <s:WindowedApplication	xmlns:fx="http://ns.adobe.com/mxml/2009" 
 						xmlns:s="library://ns.adobe.com/flex/spark" 
 						xmlns:mx="library://ns.adobe.com/flex/mx"
+						height="768"
+						width="1024"
+						showStatusBar="false"
 						windowComplete="init()"
 >
 	<fx:Script>
 		<![CDATA[
+			import com.plantpinball.events.LocalConnectionEvent;
+			import com.plantpinball.playfield.data.AppCommunicationMessage;
 			import com.plantpinball.utils.LocalConnectionUtil;
 			import com.plantpinball.video.VideoPlayer;
 			
+			import mx.core.UIComponent;
+			
 			private var _localConnectionUtil:LocalConnectionUtil;
 			private var _videoPlayer:VideoPlayer;
+			private var _appContainer:UIComponent;
 			
 			private function init():void 
 			{
@@ -20,14 +28,29 @@
 			
 			private function initVisuals():void
 			{
+				_appContainer = new UIComponent();
+				addElement(_appContainer);
 				
+				_videoPlayer = new VideoPlayer();
+				_appContainer.addChild(_videoPlayer);
 			}
 			
 			private function initLocalConnection():void
 			{
 				_localConnectionUtil = new LocalConnectionUtil("upper", "lower");
-
-				_localConnectionUtil.send("Hello from Upper");
+				_localConnectionUtil.addEventListener(LocalConnectionEvent.MESSAGE_RECEIVED, onMessageReceived);
+			}
+			
+			private function onMessageReceived(e:LocalConnectionEvent):void
+			{
+				trace(e.data.message);
+				
+				switch(e.data.message)
+				{
+					case AppCommunicationMessage.PLAY_INTRO:
+						_videoPlayer.loadVideo("video/intro_upper.f4v",1024,768);
+						break;
+				}
 			}
 		]]>
 	</fx:Script>

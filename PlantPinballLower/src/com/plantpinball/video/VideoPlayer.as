@@ -48,7 +48,7 @@ package com.plantpinball.video
 			_netStream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onASyncError);
 			_netStream.client = this;
 			
-			_video = new Video(width, height);
+			_video = new Video(_width, _height);
 			_video.attachNetStream(_netStream);
 			addChild(_video);
 			

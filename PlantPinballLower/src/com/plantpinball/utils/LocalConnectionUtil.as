@@ -44,8 +44,7 @@ package com.plantpinball.utils
 		
 		private function onMessageReceived(e:LocalConnectionEvent):void
 		{
-			trace("!");
-			trace(e.data.message);
+			dispatchEvent(new LocalConnectionEvent(LocalConnectionEvent.MESSAGE_RECEIVED, e.data));
 		}
 	}
 }

@@ -9,6 +9,7 @@
 >
 <fx:Script>
 		<![CDATA[
+			import com.plantpinball.playfield.data.AppCommunicationMessage;
 			import com.plantpinball.playfield.PlayfieldMain;
 			import com.plantpinball.playfield.display.SolidSurfaces;
 			import com.plantpinball.utils.LocalConnectionUtil;
@@ -27,6 +28,7 @@
 			{
 				initStage();
 				initLocalConnection();
+				initKeyControls();
 				initVisuals();
 			}
 			
@@ -49,7 +51,6 @@
 				_playfield.init();
 				
 				_videoPlayer = new VideoPlayer();
-				//_videoPlayer.loadVideo("video/test.flv", 360, 240);
 				
 				_appContainer = new UIComponent();
 				_appContainer.addChild(_playfield);
@@ -57,6 +58,27 @@
 				
 				addElement(_appContainer);
 			}
+			
+			private function startIntro():void
+			{
+				_localConnectionUtil.send(AppCommunicationMessage.PLAY_INTRO);
+				_videoPlayer.loadVideo("video/intro_lower.f4v",720,1280);
+			}
+			
+			private function initKeyControls():void
+			{
+				stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+			}
+			
+			private function onKeyUp(e:KeyboardEvent):void
+			{
+				if(e.keyCode == 83)
+				{
+					stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+					startIntro();
+				}
+			}
+				
 		]]>
 	</fx:Script>
 </s:WindowedApplication>
