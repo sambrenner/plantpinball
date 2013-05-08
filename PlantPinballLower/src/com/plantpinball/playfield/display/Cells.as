@@ -13,12 +13,14 @@ package com.plantpinball.playfield.display
 		private var _newestCells:Vector.<Cell>;
 		private var _fileIsHit:Vector.<Boolean> = new Vector.<Boolean>(5);
 		private var _yMultiplier:int;
+		private var _elongationMode:Boolean;
 		
 		public function Cells(elongation:Boolean = false, yMultiplier:int = 0)
 		{
 			super();
 			
 			_yMultiplier = yMultiplier;
+			_elongationMode = elongation;
 			
 			_cellHolder = new MovieClip();
 			addChild(_cellHolder);
@@ -63,7 +65,13 @@ package com.plantpinball.playfield.display
 		
 		private function progressRow():void
 		{
-			_yMultiplier += 1;
+			_yMultiplier ++;
+			
+			if(_elongationMode)
+			{
+				_yMultiplier++;
+				_elongationMode = false;
+			}
 			
 			resetFileStatus();
 			finishRowAnimation();
@@ -113,7 +121,7 @@ package com.plantpinball.playfield.display
 			for(var i:int=0; i<_newestCells.length; i++)
 			{
 				var cell:Cell = makeCell(i, true);
-				cell.y = _yMultiplier * LayoutUtil.CELL_Y_SPACING;
+				cell.y = (_yMultiplier + 2) * LayoutUtil.CELL_Y_SPACING;
 				
 				_newestCells[i] = cell;
 				_cellHolder.addChild(cell);

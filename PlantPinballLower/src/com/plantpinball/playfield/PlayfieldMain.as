@@ -29,6 +29,7 @@ package com.plantpinball.playfield
 	import com.plantpinball.utils.LocalConnectionUtil;
 	import com.plantpinball.utils.SizeUtil;
 	
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
@@ -61,6 +62,12 @@ package com.plantpinball.playfield
 		private var _slantedRoot:SlantedRoot;
 		private var _rootCapCorrected:Boolean;
 		
+		private var _bgLayer:MovieClip;
+		private var _ballLayer:MovieClip;
+		private var _frameLayer:MovieClip;
+		private var _rootLayer:MovieClip;
+		private var _cellLayer:MovieClip;
+		
 		public function PlayfieldMain(stage:Stage, localConnectionUtil:LocalConnectionUtil)
 		{
 			_localConnectionUtil = localConnectionUtil;
@@ -83,49 +90,65 @@ package com.plantpinball.playfield
 			_physics.gameplayMode = _gameplayMode = GameplayMode.NORMAL;
 			_physics.init();
 			
+			makeLayers();
 			makeNonPhysicsGraphics();
 			makePhysicsGraphics();
 			
 			onRowCleared(null);
 			update(null);
 		}
+		
+		private function makeLayers():void
+		{
+			_bgLayer = new MovieClip();
+			_rootLayer = new MovieClip();
+			_cellLayer = new MovieClip();
+			_frameLayer = new MovieClip();
+			_ballLayer = new MovieClip();
+			
+			addChild(_bgLayer);
+			addChild(_rootLayer);
+			addChild(_cellLayer);
+			addChild(_frameLayer);
+			addChild(_ballLayer);
+		}
 				
 		private function makeNonPhysicsGraphics():void
 		{
-			addChild(new Background());
+			_bgLayer.addChild(new Background());
 			
 			_root = new Root();
 			_root.x = SizeUtil.width / 2;
-			addChild(_root);
+			_rootLayer.addChild(_root);
 			
 			_slantedRoot = new SlantedRoot();
 			_slantedRoot.visible = false;
-			addChild(_slantedRoot);
+			_rootLayer.addChild(_slantedRoot);
 			
 			_droplets = new Droplets();
 			_droplets.y = 1100;
-			addChild(_droplets);
+			_frameLayer.addChild(_droplets);
 			
 			_cells = new Cells();
 			_cells.y = LayoutUtil.CELL_Y_OFFSET;
 			_cells.addEventListener(PlantPinballEvent.ROW_CLEARED, onRowCleared);
-			addChild(_cells);
+			_cellLayer.addChild(_cells);
 		}
 				
 		private function makePhysicsGraphics():void
 		{
 			_flippers = new Flippers();
 			_flippers.y = 1138;
-			addChild(_flippers);
+			_frameLayer.addChild(_flippers);
 			
 			_ball = new Ball();
-			addChild(_ball);
+			_ballLayer.addChild(_ball);
 			
 			_targets = new Targets();
-			addChild(_targets);
+			_cellLayer.addChild(_targets);
 			
 			_solidSurfaces = new SolidSurfaces();
-			addChild(_solidSurfaces);
+			_frameLayer.addChild(_solidSurfaces);
 			
 			var debugDraw:b2DebugDraw = new b2DebugDraw();
 			var debugSprite:Sprite = new Sprite();
@@ -155,8 +178,8 @@ package com.plantpinball.playfield
 			
 			_obstacleTrample.alpha = _obstacleFungus.alpha = 0;
 			
-			addChild(_obstacleFungus);
-			addChild(_obstacleTrample);
+			_frameLayer.addChild(_obstacleFungus);
+			_frameLayer.addChild(_obstacleTrample);
 			
 			TweenLite.to(_obstacleFungus, .5, { alpha: 1 });
 			TweenLite.to(_obstacleTrample, .5, { alpha: 1 });
@@ -249,10 +272,11 @@ package com.plantpinball.playfield
 			
 			var cellY:int = _cells.y;
 			var cellMultiplier:int = _cells.yMultiplier;
-			removeChild(_cells);
+			_cellLayer.removeChild(_cells);
 			_cells = new Cells(true, cellMultiplier);
+			_cells.addEventListener(PlantPinballEvent.ROW_CLEARED, onRowCleared);			
 			_cells.y = cellY;
-			addChild(_cells);
+			_cellLayer.addChild(_cells);
 			
 			_obstacleFungus.hide(false);
 			_obstacleTrample.hide(true);
@@ -280,6 +304,17 @@ package com.plantpinball.playfield
 		
 		private function onObstacleComplete(event:PlantPinballEvent):void
 		{
+			if(_gameplayMode == GameplayMode.OBSTACLE_TRAMPLE)
+			{
+				_root.showUpperRoot();
+				
+				var maskSprite:Sprite = new Sprite();
+				maskSprite.graphics.beginFill(0);
+				maskSprite.graphics.drawRect(0, _slantedRoot.y - 20, SizeUtil.width, SizeUtil.height);
+				_rootLayer.addChild(maskSprite);
+				_root.mask = maskSprite;
+			}
+			
 			_root.showCap();
 			_targets.show();
 			_targets.activateAll();
@@ -343,6 +378,13 @@ package com.plantpinball.playfield
 		
 		private function onRowCleared(e:PlantPinballEvent):void
 		{
+			if(_gameplayMode == GameplayMode.OBSTACLE_TRAMPLE) 
+			{
+				onObstacleComplete(null);
+			}
+			
+			trace(_cells.yMultiplier);
+			
 			_physics.moveTargets(_cells.y + ((_cells.yMultiplier + 2.5) * LayoutUtil.CELL_Y_SPACING));
 			_targets.activateAll();
 			
