@@ -10,8 +10,9 @@
 	<fx:Script>
 		<![CDATA[
 			import com.plantpinball.display.DefaultScreenUpper;
+			import com.plantpinball.display.LifeMeter;
 			import com.plantpinball.events.LocalConnectionEvent;
-			import com.plantpinball.playfield.data.AppCommunicationMessage;
+			import com.plantpinball.data.AppCommunicationMessage;
 			import com.plantpinball.utils.LocalConnectionUtil;
 			import com.plantpinball.video.VideoPlayer;
 			
@@ -20,6 +21,7 @@
 			private var _localConnectionUtil:LocalConnectionUtil;
 			private var _videoPlayer:VideoPlayer;
 			private var _appContainer:UIComponent;
+			private var _lifeMeter:LifeMeter;
 			
 			private function init():void 
 			{

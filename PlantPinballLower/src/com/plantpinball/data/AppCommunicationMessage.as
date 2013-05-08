@@ -1,4 +1,4 @@
-package com.plantpinball.playfield.data
+package com.plantpinball.data
 {
 	public class AppCommunicationMessage
 	{

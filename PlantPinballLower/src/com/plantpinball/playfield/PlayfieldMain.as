@@ -2,7 +2,7 @@ package com.plantpinball.playfield
 {
 	import com.greensock.TweenLite;
 	import com.plantpinball.events.PlantPinballEvent;
-	import com.plantpinball.playfield.data.AppCommunicationMessage;
+	import com.plantpinball.data.AppCommunicationMessage;
 	import com.plantpinball.playfield.data.BodyType;
 	import com.plantpinball.playfield.data.GameplayMode;
 	import com.plantpinball.playfield.data.ObstacleType;
