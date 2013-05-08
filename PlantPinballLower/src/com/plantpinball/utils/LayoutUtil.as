@@ -15,6 +15,8 @@ package com.plantpinball.utils
 		public static const TRAMPLE_OBSTACLE_Y:Number = 0.17;
 		public static const FUNGUS_OBSTACLE_Y:Number = 0.42;
 		public static const OBSTACLE_X:Number = 0.12;
+		public static const NICHE_X:Number = 0.5;
+		public static const NICHE_Y_OFFSET:Number = 0.18;
 		
 		//pixel values
 		public static const CELL_Y_SPACING:int = 66;

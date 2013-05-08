@@ -2,6 +2,7 @@ package com.plantpinball.playfield
 {
 	import com.greensock.TweenLite;
 	import com.plantpinball.events.PlantPinballEvent;
+	import com.plantpinball.playfield.data.BodyType;
 	import com.plantpinball.playfield.data.GameplayMode;
 	import com.plantpinball.playfield.data.ObstacleType;
 	import com.plantpinball.playfield.data.TargetValueObject;
@@ -14,7 +15,11 @@ package com.plantpinball.playfield
 	import com.plantpinball.playfield.display.ObstacleFungus;
 	import com.plantpinball.playfield.display.ObstacleTrample;
 	import com.plantpinball.playfield.display.Root;
+	import com.plantpinball.playfield.display.SolidSurfaces;
 	import com.plantpinball.playfield.display.Targets;
+	import com.plantpinball.playfield.display.text.FungusInstructions;
+	import com.plantpinball.playfield.display.text.FungusPopup;
+	import com.plantpinball.playfield.display.text.PopupText;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
 	import com.plantpinball.utils.LayoutUtil;
 	import com.plantpinball.utils.SizeUtil;
@@ -44,6 +49,8 @@ package com.plantpinball.playfield
 		private var _fungus:Fungus;
 		private var _obstacleFungus:ObstacleFungus;
 		private var _obstacleTrample:ObstacleTrample;
+		private var _solidSurfaces:SolidSurfaces;
+		private var _popup:PopupText;
 		
 		public function PlayfieldMain(stage:Stage)
 		{
@@ -102,6 +109,9 @@ package com.plantpinball.playfield
 			
 			_targets = new Targets();
 			addChild(_targets);
+			
+			_solidSurfaces = new SolidSurfaces();
+			addChild(_solidSurfaces);
 			
 			var debugDraw:b2DebugDraw = new b2DebugDraw();
 			var debugSprite:Sprite = new Sprite();
@@ -162,8 +172,17 @@ package com.plantpinball.playfield
 			var data:TargetValueObject = event.data as TargetValueObject;
 			
 			_ball.gotoAndPlay(2);
-			_cells.hitCell(data.id);
-			_targets.unactivate(data.id);
+			
+			switch(data.bodyType)
+			{
+				case BodyType.TARGET:
+					_cells.hitCell(data.id);
+					_targets.unactivate(data.id);
+					break;
+				case BodyType.NICHE:
+					onObstacleComplete(null);
+			}
+			
 		}
 		
 		private function onObstacleHit(event:PlantPinballEvent):void
@@ -177,7 +196,7 @@ package com.plantpinball.playfield
 				case ObstacleType.FUNGUS:
 					_physics.gameplayMode = GameplayMode.OBSTACLE_FUNGUS;
 					_physics.enterObstacleMode();
-										
+					
 					_fungus = new Fungus();
 					_fungus.x = SizeUtil.width / 2;
 					_fungus.y = _cells.y + ((_cells.yMultiplier + 2.5) * LayoutUtil.CELL_Y_SPACING);
@@ -198,20 +217,54 @@ package com.plantpinball.playfield
 		
 		private function onObstacleComplete(event:PlantPinballEvent):void
 		{
+			_root.showCap();
+			_targets.show();
+			_targets.activateAll();
 			
+			_physics.exitObstacleMode();
+			_physics.gameplayMode = GameplayMode.NORMAL;
 		}
 		
 		private function onFungusAnimationPing(event:PlantPinballEvent):void
 		{
 			_fungus.removeEventListener(PlantPinballEvent.ANIMATION_PING, onFungusAnimationPing);
 			
+			_obstacleFungus.hide();
 			_targets.hide();
 			_root.hideCap();
-			_cells.rollbackRow();	
+			_cells.rollbackRow();
 		}
 		
 		private function onFungusAnimationComplete(event:PlantPinballEvent):void
 		{
+			_fungus.removeEventListener(PlantPinballEvent.ANIMATION_PING, onFungusAnimationComplete);
+			
+			_popup = new FungusPopup();
+			_popup.x = SizeUtil.width / 2;
+			_popup.y = SizeUtil.height / 2;
+			_popup.addEventListener(PlantPinballEvent.TEXT_COMPLETE, onPopupTextComplete);
+			addChild(_popup);
+			_popup.show();
+		}
+		
+		private function onPopupTextComplete(event:PlantPinballEvent):void
+		{
+			_popup.removeEventListener(PlantPinballEvent.TEXT_COMPLETE, onPopupTextComplete);
+			_popup.hide();
+			
+			_popup = new FungusInstructions();
+			_popup.x = SizeUtil.width / 2;
+			_popup.y = _physics.targetPositions[0].y + (LayoutUtil.NICHE_Y_OFFSET * SizeUtil.height);
+			_popup.addEventListener(PlantPinballEvent.TEXT_COMPLETE, onInstructionTextComplete);
+			addChild(_popup);
+			_popup.show();
+		}
+		
+		private function onInstructionTextComplete(event:PlantPinballEvent):void
+		{
+			_popup.removeEventListener(PlantPinballEvent.TEXT_COMPLETE, onInstructionTextComplete);
+			_popup.hide();
+			
 			_pausePhysics = false;
 		}
 		

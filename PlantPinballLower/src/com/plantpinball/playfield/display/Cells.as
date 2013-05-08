@@ -35,6 +35,9 @@ package com.plantpinball.playfield.display
 		
 		public function rollbackRow():void
 		{
+			resetFileStatus();
+			makeCellsActive();
+			
 			for(var i:int=0; i<_newestCells.length; i++)
 			{
 				_newestCells[i].reset();

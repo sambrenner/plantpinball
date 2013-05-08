@@ -9,6 +9,7 @@ package com.plantpinball.events
 		public static const TARGET_HIT:String = "target_hit";
 		public static const ROW_CLEARED:String = "row_cleared";
 		public static const OBSTACLE_HIT:String = "obstacle_hit";
+		public static const TEXT_COMPLETE:String = "text_complete";
 		
 		public var data:Object;
 		

@@ -3,6 +3,7 @@ package com.plantpinball.playfield.physics
 	import com.plantpinball.events.PlantPinballEvent;
 	import com.plantpinball.playfield.data.BodyType;
 	import com.plantpinball.playfield.data.BodyValueObject;
+	import com.plantpinball.playfield.data.GameplayMode;
 	import com.plantpinball.playfield.data.ObstacleType;
 	import com.plantpinball.playfield.data.TargetValueObject;
 	import com.plantpinball.playfield.physics.listeners.TargetContactListener;
@@ -19,7 +20,6 @@ package com.plantpinball.playfield.physics
 	import Box2D.Dynamics.b2FixtureDef;
 	import Box2D.Dynamics.b2World;
 	import Box2D.Dynamics.Joints.b2RevoluteJointDef;
-	import com.plantpinball.playfield.data.GameplayMode;
 	
 	public class PhysicsWorld extends b2World
 	{
@@ -43,6 +43,7 @@ package com.plantpinball.playfield.physics
 		private var _trampleObstacle:b2Body;
 		private var _fungusObstacle:b2Body;
 		private var _obstacles:Vector.<b2Body>;
+		private var _niche:b2Body;
 			
 		public function PhysicsWorld(gravity:b2Vec2, doSleep:Boolean)
 		{
@@ -70,6 +71,7 @@ package com.plantpinball.playfield.physics
 			checkInput();
 			checkTargetHit();
 			if(_obstacles) checkObstacleHit();
+			if(_gameplayMode == GameplayMode.OBSTACLE_FUNGUS) checkNicheHit();
 			checkBallLost(ballPos);
 			checkBallStuck(ballPos);
 		}
@@ -79,7 +81,7 @@ package com.plantpinball.playfield.physics
 			var fd:b2FixtureDef;
 			var bodyDefC:b2BodyDef = new b2BodyDef();
 			bodyDefC.type = b2Body.b2_dynamicBody;
-			var circDef:b2CircleShape= new b2CircleShape(25 / PPM);
+			var circDef:b2CircleShape= new b2CircleShape(30 / PPM);
 			fd = new b2FixtureDef();
 			fd.shape = circDef;
 			fd.density = 2.0;
@@ -138,6 +140,16 @@ package com.plantpinball.playfield.physics
 					this.dispatchEvent(new PlantPinballEvent(PlantPinballEvent.TARGET_HIT, tVO));
 					tVO.hit = false;
 				}
+			}
+		}
+		
+		private function checkNicheHit():void
+		{
+			var vo:TargetValueObject = _niche.GetUserData() as TargetValueObject;
+			if(vo.hit)
+			{
+				this.dispatchEvent(new PlantPinballEvent(PlantPinballEvent.TARGET_HIT, vo));
+				vo.hit = false;
 			}
 		}
 		
@@ -261,6 +273,22 @@ package com.plantpinball.playfield.physics
 			}
 		}
 		
+		private function disableTargets():void
+		{
+			for(var i:int = 0; i < _numTargets; i++)
+			{
+				_targets[i].SetActive(false);
+			}
+		}
+		
+		private function enableTargets():void
+		{
+			for(var i:int = 0; i < _numTargets; i++)
+			{
+				_targets[i].SetActive(true);
+			}
+		}
+		
 		public function moveTargets(yPosition:Number):void
 		{
 			yPosition /= SizeUtil.height;
@@ -290,6 +318,27 @@ package com.plantpinball.playfield.physics
 			_ball.CreateFixture(fd);
 		}
 		
+		private function makeNiche():void
+		{
+			var fd:b2FixtureDef;
+			var bodyDefC:b2BodyDef = new b2BodyDef();
+			bodyDefC.type = b2Body.b2_staticBody;
+			var circDef:b2CircleShape= new b2CircleShape(90 / PPM);
+			fd = new b2FixtureDef();
+			fd.shape = circDef;
+			fd.density = 1.0;
+			fd.friction = 1.0;
+			fd.restitution = 0.2;
+			bodyDefC.position.Set(LayoutUtil.NICHE_X * SizeUtil.width / PPM, _targets[0].GetPosition().y + ( LayoutUtil.NICHE_Y_OFFSET * SizeUtil.height / PPM));
+			_niche = this.CreateBody(bodyDefC);
+			_niche.SetBullet(true);
+			_niche.CreateFixture(fd);
+			
+			var nicheVO:TargetValueObject = new TargetValueObject();
+			nicheVO.bodyType = BodyType.NICHE;
+			_niche.SetUserData(nicheVO);
+		}
+		
 		public function launchBall():void
 		{
 			if(!_waitingForPlunger) return;
@@ -297,7 +346,7 @@ package com.plantpinball.playfield.physics
 			_waitingForPlunger = false;
 			
 			var currentPos:b2Vec2 = _ball.GetPosition();
-			_ball.ApplyImpulse(new b2Vec2(currentPos.x, currentPos.y - 200) ,currentPos)
+			_ball.ApplyImpulse(new b2Vec2(currentPos.x, currentPos.y - 200),currentPos)
 		}
 		
 		public function resetBall():void
@@ -353,20 +402,28 @@ package com.plantpinball.playfield.physics
 			switch(_gameplayMode)
 			{
 				case GameplayMode.OBSTACLE_FUNGUS:
-					//remove targets
-					//make SCNiche target + listener
+					disableTargets();
+					makeNiche();
+					this.DestroyBody(_fungusObstacle);
 					break;
 				case GameplayMode.OBSTACLE_TRAMPLE:
-					
+					this.DestroyBody(_trampleObstacle);
 					break;
 			}
 		}
 		
 		public function exitObstacleMode():void
 		{
-			//if targets are inactive, activate them
-			//if extra targets from previous mode, remove them
-			//remove the target for the obstacle mode just played through
+			switch(_gameplayMode)
+			{
+				case GameplayMode.OBSTACLE_FUNGUS:
+					enableTargets();
+					this.DestroyBody(_niche);
+					break;
+				case GameplayMode.OBSTACLE_TRAMPLE:
+					
+					break;
+			}
 		}
 		
 		public function set rightFlipperOn(value:Boolean):void

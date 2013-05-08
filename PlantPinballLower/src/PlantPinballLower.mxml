@@ -51,12 +51,9 @@
 				_videoPlayer = new VideoPlayer();
 				//_videoPlayer.loadVideo("video/test.flv", 360, 240);
 				
-				_solidSurfaces = new SolidSurfaces();
-				
 				_appContainer = new UIComponent();
 				_appContainer.addChild(_playfield);
 				_appContainer.addChild(_videoPlayer);
-				_appContainer.addChild(_solidSurfaces);
 				
 				addElement(_appContainer);
 			}
