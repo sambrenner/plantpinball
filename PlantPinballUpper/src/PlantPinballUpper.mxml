@@ -9,14 +9,16 @@
 >
 	<fx:Script>
 		<![CDATA[
+			import com.plantpinball.data.AppCommunicationMessage;
 			import com.plantpinball.display.DefaultScreenUpper;
 			import com.plantpinball.display.LifeMeter;
 			import com.plantpinball.events.LocalConnectionEvent;
-			import com.plantpinball.data.AppCommunicationMessage;
+			import com.plantpinball.events.VideoPlayerEvent;
 			import com.plantpinball.utils.LocalConnectionUtil;
 			import com.plantpinball.video.VideoPlayer;
 			
 			import mx.core.UIComponent;
+			
 			
 			private var _localConnectionUtil:LocalConnectionUtil;
 			private var _videoPlayer:VideoPlayer;
@@ -35,8 +37,11 @@
 				addElement(_appContainer);
 				
 				_videoPlayer = new VideoPlayer();
+				_videoPlayer.addEventListener(VideoPlayerEvent.VIDEO_STARTED, onVideoStart);
+				_videoPlayer.addEventListener(VideoPlayerEvent.VIDEO_STOPPED, onVideoEnd);
 				
 				_appContainer.addChild(new DefaultScreenUpper());
+				_appContainer.addChild(_lifeMeter);
 				_appContainer.addChild(_videoPlayer);
 			}
 			
@@ -44,6 +49,16 @@
 			{
 				_localConnectionUtil = new LocalConnectionUtil("upper", "lower");
 				_localConnectionUtil.addEventListener(LocalConnectionEvent.MESSAGE_RECEIVED, onMessageReceived);
+			}
+			
+			private function onVideoStart(e:VideoPlayerEvent):void
+			{
+				_videoPlayer.visible = true;
+			}
+			
+			private function onVideoEnd(e:VideoPlayerEvent):void
+			{ 
+				_videoPlayer.visible = false;
 			}
 			
 			private function onMessageReceived(e:LocalConnectionEvent):void

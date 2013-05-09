@@ -396,11 +396,19 @@ package com.plantpinball.playfield
 			_rows++;
 			
 			if(_rows == 3) makeObstacles();
+			if(_rows == 6) gameWon();
+		}
+		
+		private function gameWon():void
+		{
+			//_localConnectionUtil.send(AppCommunicationMessage.WIN_GAME);
+			trace("WINNER");
 		}
 		
 		private function onDeath(e:PlantPinballEvent):void
 		{
-			
+			//_localConnectionUtil.send(AppCommunicationMessage.LOST_GAME);
+			trace("LOSER");
 		}
 		
 		private function onKeyDown(event:KeyboardEvent):void

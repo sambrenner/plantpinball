@@ -25,6 +25,8 @@
 			private var _solidSurfaces:SolidSurfaces;
 			private var _videoPlayer:VideoPlayer;
 			private var _localConnectionUtil:LocalConnectionUtil;
+			
+			private var _inIntroLoop:Boolean = true;
 								
 			private function init():void
 			{
