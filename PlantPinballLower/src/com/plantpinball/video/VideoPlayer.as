@@ -117,6 +117,16 @@ package com.plantpinball.video
 			this.visible = false;
 		}
 		
+		public function play():void
+		{
+			_netStream.play();
+		}
+		
+		public function pause():void
+		{
+			_netStream.pause();
+		}
+		
 		public function setVolume(volume:Number):void
 		{
 			var sndTransform:SoundTransform = new SoundTransform(volume);

@@ -13,7 +13,11 @@
 			import com.plantpinball.display.DefaultScreenUpper;
 			import com.plantpinball.display.LifeMeter;
 			import com.plantpinball.events.LocalConnectionEvent;
+			import com.plantpinball.events.PlantPinballEvent;
 			import com.plantpinball.events.VideoPlayerEvent;
+			import com.plantpinball.playfield.display.text.LosePopup;
+			import com.plantpinball.playfield.display.text.PopupText;
+			import com.plantpinball.playfield.display.text.WinPopup;
 			import com.plantpinball.utils.LocalConnectionUtil;
 			import com.plantpinball.video.VideoPlayer;
 			
@@ -40,6 +44,9 @@
 				_videoPlayer.addEventListener(VideoPlayerEvent.VIDEO_STARTED, onVideoStart);
 				_videoPlayer.addEventListener(VideoPlayerEvent.VIDEO_STOPPED, onVideoEnd);
 				
+				_lifeMeter = new LifeMeter();
+				_lifeMeter.visible = false;
+				
 				_appContainer.addChild(new DefaultScreenUpper());
 				_appContainer.addChild(_lifeMeter);
 				_appContainer.addChild(_videoPlayer);
@@ -49,6 +56,40 @@
 			{
 				_localConnectionUtil = new LocalConnectionUtil("upper", "lower");
 				_localConnectionUtil.addEventListener(LocalConnectionEvent.MESSAGE_RECEIVED, onMessageReceived);
+			}
+			
+			private function startGame():void
+			{
+				_videoPlayer.pause();
+				_videoPlayer.hide();
+				_lifeMeter.visible = true;
+			}
+			
+			private function wonGame():void
+			{
+				var popupText:WinPopup = new WinPopup();
+				popupText.x = 1024 / 2;
+				popupText.y = 768 / 2;
+				popupText.addEventListener(PlantPinballEvent.TEXT_COMPLETE, onGameOverTextComplete);
+				_appContainer.addChild(popupText);
+				popupText.show();
+			}
+			
+			private function lostGame():void
+			{
+				var popupText:LosePopup = new LosePopup();
+				popupText.x = 1024 / 2;
+				popupText.y = 768 / 2;
+				popupText.addEventListener(PlantPinballEvent.TEXT_COMPLETE, onGameOverTextComplete);
+				_appContainer.addChild(popupText);
+				popupText.show();
+			}
+			
+			private function onGameOverTextComplete(e:PlantPinballEvent):void
+			{
+				_lifeMeter.visible = false;
+				var text:PopupText = e.target as PopupText;
+				text.hide();
 			}
 			
 			private function onVideoStart(e:VideoPlayerEvent):void
@@ -93,6 +134,15 @@
 						break;
 					case AppCommunicationMessage.SET_LIFE_7:
 						_lifeMeter.gotoAndStop(7);
+						break;
+					case AppCommunicationMessage.LOST_GAME:
+						lostGame();
+						break;
+					case AppCommunicationMessage.WON_GAME:
+						wonGame();
+						break;
+					case AppCommunicationMessage.START_GAME:
+						startGame();
 						break;
 				}
 			}

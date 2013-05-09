@@ -21,9 +21,11 @@ package com.plantpinball.playfield
 	import com.plantpinball.playfield.display.Targets;
 	import com.plantpinball.playfield.display.text.FungusInstructions;
 	import com.plantpinball.playfield.display.text.FungusPopup;
+	import com.plantpinball.playfield.display.text.LosePopup;
 	import com.plantpinball.playfield.display.text.PopupText;
 	import com.plantpinball.playfield.display.text.TrampleInstructions;
 	import com.plantpinball.playfield.display.text.TramplePopup;
+	import com.plantpinball.playfield.display.text.WinPopup;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
 	import com.plantpinball.utils.LayoutUtil;
 	import com.plantpinball.utils.LifeUtil;
@@ -252,7 +254,7 @@ package com.plantpinball.playfield
 					break;
 				case ObstacleType.TRAMPLE:
 					_physics.gameplayMode = _gameplayMode = GameplayMode.OBSTACLE_TRAMPLE;
-					//_localConnectionUtil.send(AppCommunicationMessage.PLAY_TRAMPLE);
+					_localConnectionUtil.send(AppCommunicationMessage.PLAY_TRAMPLE);
 					
 					TweenLite.delayedCall(2, initTrampleMode);
 					break;
@@ -401,14 +403,42 @@ package com.plantpinball.playfield
 		
 		private function gameWon():void
 		{
-			//_localConnectionUtil.send(AppCommunicationMessage.WIN_GAME);
+			_pausePhysics = true;
+			
+			_localConnectionUtil.send(AppCommunicationMessage.WON_GAME);
 			trace("WINNER");
+			
+			TweenLite.delayedCall(1, _droplets.gotoAndPlay, [2]);
+			
+			var popupText:WinPopup = new WinPopup();
+			popupText.x = SizeUtil.width / 2;
+			popupText.y = SizeUtil.height / 2;
+			popupText.addEventListener(PlantPinballEvent.TEXT_COMPLETE, onGameOverTextComplete);
+			addChild(popupText);
+			TweenLite.delayedCall(2, popupText.show);
 		}
 		
 		private function onDeath(e:PlantPinballEvent):void
 		{
-			//_localConnectionUtil.send(AppCommunicationMessage.LOST_GAME);
+			_pausePhysics = true;
+			
+			_localConnectionUtil.send(AppCommunicationMessage.LOST_GAME);
 			trace("LOSER");
+			
+			var popupText:LosePopup = new LosePopup();
+			popupText.x = SizeUtil.width / 2;
+			popupText.y = SizeUtil.height / 2;
+			popupText.addEventListener(PlantPinballEvent.TEXT_COMPLETE, onGameOverTextComplete);
+			addChild(popupText);
+			popupText.show();
+		}
+		
+		private function onGameOverTextComplete(e:PlantPinballEvent):void
+		{
+			var text:PopupText = e.target as PopupText;
+			text.hide();
+			
+			dispatchEvent(new PlantPinballEvent(PlantPinballEvent.GAME_OVER));
 		}
 		
 		private function onKeyDown(event:KeyboardEvent):void

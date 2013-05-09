@@ -4,8 +4,9 @@ package com.plantpinball.data
 	{
 		public static const PLAY_INTRO:String = "playintro";
 		public static const PLAY_TRAMPLE:String = "playtrample";
-		public static const WIN_GAME:String = "won";
+		public static const WON_GAME:String = "won";
 		public static const LOST_GAME:String = "lost";
+		public static const START_GAME:String = "startgame";
 		
 		public static const SET_LIFE_1:String = "1";
 		public static const SET_LIFE_2:String = "2";

@@ -11,6 +11,8 @@ package com.plantpinball.events
 		public static const OBSTACLE_HIT:String = "obstacle_hit";
 		public static const TEXT_COMPLETE:String = "text_complete";
 		public static const DEATH:String = "xXx_deadplant_xXx";
+		public static const WIN:String = "win";
+		public static const GAME_OVER:String = "gameover";
 		
 		public var data:Object;
 		

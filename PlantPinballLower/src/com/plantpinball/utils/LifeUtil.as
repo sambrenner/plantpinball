@@ -78,9 +78,7 @@ package com.plantpinball.utils
 					break;
 			}
 			
-			trace("LIFE: " + message);
-			
-			//_localConnectionUtil.send(message);
+			_localConnectionUtil.send(message);
 		}
 
 		public function get health():int

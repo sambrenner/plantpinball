@@ -9,11 +9,13 @@
 >
 <fx:Script>
 		<![CDATA[
+			import com.plantpinball.data.AppCommunicationMessage;
 			import com.plantpinball.display.DefaultScreenLower;
+			import com.plantpinball.events.PlantPinballEvent;
 			import com.plantpinball.events.VideoPlayerEvent;
 			import com.plantpinball.playfield.PlayfieldMain;
-			import com.plantpinball.data.AppCommunicationMessage;
 			import com.plantpinball.playfield.display.SolidSurfaces;
+			import com.plantpinball.playfield.display.text.ButtonNotifications;
 			import com.plantpinball.utils.LocalConnectionUtil;
 			import com.plantpinball.utils.SizeUtil;
 			import com.plantpinball.video.VideoPlayer;
@@ -25,8 +27,10 @@
 			private var _solidSurfaces:SolidSurfaces;
 			private var _videoPlayer:VideoPlayer;
 			private var _localConnectionUtil:LocalConnectionUtil;
+			private var _skipInfo:ButtonNotifications;
 			
 			private var _inIntroLoop:Boolean = true;
+			private var _firstRun:Boolean = true;
 								
 			private function init():void
 			{
@@ -52,24 +56,44 @@
 			private function initVisuals():void
 			{
 				_playfield = new PlayfieldMain(stage, _localConnectionUtil);
+				_playfield.addEventListener(PlantPinballEvent.GAME_OVER, onGameOver);
 				
 				_videoPlayer = new VideoPlayer();
+				_skipInfo = new ButtonNotifications();
+				_skipInfo.scaleX = _skipInfo.scaleY = .7;
+				_skipInfo.x = SizeUtil.width / 2;
+				_skipInfo.y = SizeUtil.height - 100;					 
 				
 				_appContainer = new UIComponent();
 				_appContainer.addChild(new DefaultScreenLower());
 				_appContainer.addChild(_playfield);
 				_appContainer.addChild(_videoPlayer);
+				_appContainer.addChild(_skipInfo);
 				
 				addElement(_appContainer);
 			}
 			
 			private function startIntro():void
 			{
-				//_localConnectionUtil.send(AppCommunicationMessage.PLAY_INTRO);
-				_videoPlayer.addEventListener(VideoPlayerEvent.VIDEO_STOPPED, onIntroEnd);
-				//_videoPlayer.loadVideo("video/intro_lower.f4v",720,1280);
+				_skipInfo.visible = true;
+				_skipInfo.gotoAndStop(_inIntroLoop ? 1 : 2);
 				
-				onIntroEnd(null);
+				_videoPlayer.show();
+				_localConnectionUtil.send(AppCommunicationMessage.PLAY_INTRO);
+				_videoPlayer.addEventListener(VideoPlayerEvent.VIDEO_STOPPED, onIntroEnd);
+				_videoPlayer.loadVideo("video/intro_lower.f4v",720,1280);
+			}
+			
+			private function restartIntroLoop():void
+			{
+				initKeyControls();
+				_inIntroLoop = true;
+				startIntro();
+				
+				_appContainer.removeChild(_playfield);
+				_playfield = new PlayfieldMain(stage, _localConnectionUtil);
+				_playfield.addEventListener(PlantPinballEvent.GAME_OVER, onGameOver);
+				_appContainer.addChild(_playfield);
 			}
 			
 			private function initKeyControls():void
@@ -77,19 +101,48 @@
 				stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 			}
 			
+			private function onGameOver(e:PlantPinballEvent):void
+			{
+				restartIntroLoop();
+			}
+			
 			private function onIntroEnd(e:VideoPlayerEvent):void
 			{
-				_videoPlayer.removeEventListener(VideoPlayerEvent.VIDEO_STOPPED, onIntroEnd);
-				_videoPlayer.hide();
-				_playfield.init();
+				if(_inIntroLoop)
+				{
+					startIntro();
+				}
+				else
+				{
+					_localConnectionUtil.send(AppCommunicationMessage.START_GAME);
+					_skipInfo.visible = false;
+					_videoPlayer.removeEventListener(VideoPlayerEvent.VIDEO_STOPPED, onIntroEnd);
+					_videoPlayer.pause();
+					_videoPlayer.hide();
+					_playfield.init();
+				}
 			}
 			
 			private function onKeyUp(e:KeyboardEvent):void
 			{
-				if(e.keyCode == 83)
+				if(_firstRun)
 				{
-					stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+					_firstRun = false;
 					startIntro();
+					return;
+				}
+				
+				if(_inIntroLoop)
+				{
+					//play intro video in prep for game
+					_inIntroLoop = false;
+					startIntro();
+				}
+				else
+				{
+					//begin game
+					stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+					onIntroEnd(null);
 				}
 			}
 				
