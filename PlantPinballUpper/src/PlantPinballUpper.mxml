@@ -58,6 +58,27 @@
 					case AppCommunicationMessage.PLAY_TRAMPLE:
 						_videoPlayer.loadVideo("video/trample.f4v",1024,768);
 						break;
+					case AppCommunicationMessage.SET_LIFE_1:
+						_lifeMeter.gotoAndStop(1);
+						break;
+					case AppCommunicationMessage.SET_LIFE_2:
+						_lifeMeter.gotoAndStop(2);
+						break;
+					case AppCommunicationMessage.SET_LIFE_3:
+						_lifeMeter.gotoAndStop(3);
+						break;
+					case AppCommunicationMessage.SET_LIFE_4:
+						_lifeMeter.gotoAndStop(4);
+						break;
+					case AppCommunicationMessage.SET_LIFE_5:
+						_lifeMeter.gotoAndStop(5);
+						break;
+					case AppCommunicationMessage.SET_LIFE_6:
+						_lifeMeter.gotoAndStop(6);
+						break;
+					case AppCommunicationMessage.SET_LIFE_7:
+						_lifeMeter.gotoAndStop(7);
+						break;
 				}
 			}
 		]]>

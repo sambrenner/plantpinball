@@ -1,8 +1,8 @@
 package com.plantpinball.playfield
 {
 	import com.greensock.TweenLite;
-	import com.plantpinball.events.PlantPinballEvent;
 	import com.plantpinball.data.AppCommunicationMessage;
+	import com.plantpinball.events.PlantPinballEvent;
 	import com.plantpinball.playfield.data.BodyType;
 	import com.plantpinball.playfield.data.GameplayMode;
 	import com.plantpinball.playfield.data.ObstacleType;
@@ -26,6 +26,7 @@ package com.plantpinball.playfield
 	import com.plantpinball.playfield.display.text.TramplePopup;
 	import com.plantpinball.playfield.physics.PhysicsWorld;
 	import com.plantpinball.utils.LayoutUtil;
+	import com.plantpinball.utils.LifeUtil;
 	import com.plantpinball.utils.LocalConnectionUtil;
 	import com.plantpinball.utils.SizeUtil;
 	
@@ -44,6 +45,7 @@ package com.plantpinball.playfield
 		private var _physics:PhysicsWorld;
 		private var _stage:Stage;
 		private var _localConnectionUtil:LocalConnectionUtil;
+		private var _lifeUtil:LifeUtil;
 		private var _rows:int = 0;
 		private var _pausePhysics:Boolean;
 		
@@ -71,6 +73,8 @@ package com.plantpinball.playfield
 		public function PlayfieldMain(stage:Stage, localConnectionUtil:LocalConnectionUtil)
 		{
 			_localConnectionUtil = localConnectionUtil;
+			_lifeUtil = new LifeUtil(_localConnectionUtil);
+			_lifeUtil.addEventListener(PlantPinballEvent.DEATH, onDeath);
 			_stage = stage;
 			
 			super();
@@ -89,6 +93,8 @@ package com.plantpinball.playfield
 			_physics.addEventListener(PlantPinballEvent.TARGET_HIT, onTargetHit);
 			_physics.gameplayMode = _gameplayMode = GameplayMode.NORMAL;
 			_physics.init();
+			
+			_lifeUtil.beginLifeCountdown();
 			
 			makeLayers();
 			makeNonPhysicsGraphics();
@@ -383,14 +389,18 @@ package com.plantpinball.playfield
 				onObstacleComplete(null);
 			}
 			
-			trace(_cells.yMultiplier);
-			
 			_physics.moveTargets(_cells.y + ((_cells.yMultiplier + 2.5) * LayoutUtil.CELL_Y_SPACING));
 			_targets.activateAll();
+			_lifeUtil.addHealthPoints(2);
 			
 			_rows++;
 			
 			if(_rows == 3) makeObstacles();
+		}
+		
+		private function onDeath(e:PlantPinballEvent):void
+		{
+			
 		}
 		
 		private function onKeyDown(event:KeyboardEvent):void
