@@ -9,3 +9,11 @@ The project is inspired by research by Ken Birnbaum, Associate Professor of Biol
 The project team is Sam Brenner, Alexandra Diracles, Sarah Rothberg and Fangyu Yang.
 
 Requires the Flex SDK 4.6.
+
+Version 1.0 Known Issues
+> Both obstacles disappear after one has been completed
+> Fungus obstacle is too easy!
+> No sound
+> Probably a lot of bugs. Aphids mainly (ha ha!)
+
+Note: Due to file size, this repo does not contain the sound and video files that accompany the game. If you would like them, please contact me (Sam) at samjbrenner at gmail dot com.
